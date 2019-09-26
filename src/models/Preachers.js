@@ -31,7 +31,7 @@ async function recreateAndFillTable() {
   await Preachers.sync({ force: true }).then(() => Preachers.create({
     id: 1,
     ifo: 'Алексей Коломийцев',
-    photo_url: null,
+    photo_url: 'https://bogvideo.com/wp-content/uploads/2018/01/Alexey-Kolomiytsev.jpg',
     info: 'Пастор-учитель библейской церкви "Слово благодати", Батл Граунд, Вашингтон, США',
   }));
 }
