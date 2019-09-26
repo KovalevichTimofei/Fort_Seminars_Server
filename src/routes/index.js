@@ -1,0 +1,26 @@
+import Router from 'koa-router';
+
+import { router as defaultRouter } from './default';
+import { router as seminarsRouter } from './seminars';
+import { router as lessonsRouter } from './lessons';
+import { router as listenersRouter } from './listeners';
+import { router as preachersRouter } from './preachers';
+
+const router = new Router();
+
+router.use(
+  defaultRouter.routes(),
+  defaultRouter.allowedMethods(),
+  seminarsRouter.routes(),
+  seminarsRouter.allowedMethods(),
+  lessonsRouter.routes(),
+  lessonsRouter.allowedMethods(),
+  listenersRouter.routes(),
+  listenersRouter.allowedMethods(),
+  preachersRouter.routes(),
+  preachersRouter.allowedMethods(),
+);
+
+export default function connectRoutes(app) {
+  app.use(router.routes());
+}

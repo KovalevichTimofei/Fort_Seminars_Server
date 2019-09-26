@@ -1,0 +1,11 @@
+{
+  "extends": "eslint-config-airbnb-base",
+  "rules": {
+    "linebreak-style": 0,
+    "class-methods-use-this": "off",
+    "no-plusplus": "warn",
+    "max-len": "warn",
+    "indent": ["error", 2, {"SwitchCase": 1}]
+  },
+  "parser": "babel-eslint"
+}
