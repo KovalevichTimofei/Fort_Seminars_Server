@@ -6,7 +6,7 @@ import { generateSeminarsListeners } from './models/Seminars_Listeners';
 
 const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize(process.env.DB_URL);
+const sequelize = new Sequelize(process.env.DB_URL);// 'postgres://postgres:root@localhost:5432/seminars');
 
 sequelize
   .authenticate()
