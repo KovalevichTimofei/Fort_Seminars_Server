@@ -16,7 +16,9 @@ router
     next();
   })
   .get('/month/:number', async (ctx, next) => {
-    ctx.body = await getByMonth(ctx.params.number);
+    console.log(await getByMonth(9));
+    const result = await getByMonth(ctx.params.number);
+    ctx.body = result.length ? result : [{ info: 'В этом месяце нет семинаров' }];
     next();
   })
   .post('/create', async (ctx, next) => {
