@@ -8,7 +8,7 @@ const Router = require('koa-router');
 export const router = new Router({ prefix: '/seminars' });
 
 function getPrettyDate(date) {
-  return `${date.getDate() + 1}.${date.getMonth() + 1}.${date.getFullYear()}`;
+  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 }
 
 router
