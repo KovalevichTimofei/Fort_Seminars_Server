@@ -2,7 +2,7 @@ export default function (data) {
   const {
     name, surname, email, seminar,
   } = data;
-  const href = `http://localhost:3000/listeners/register/confirm?name=${name}&surname=${surname}&email=${email}&seminar=${seminar.id}`;
+  const href = `http://${process.env.THIS_HOST_PORT}/listeners/register/confirm?name=${name}&surname=${surname}&email=${email}&seminar=${seminar.id}`;
   return `<html class="container">
             <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet">
             <div class="text-container">
