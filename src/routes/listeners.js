@@ -46,7 +46,9 @@ router
   })
   .post('/register', async (ctx, next) => {
     console.log(ctx.request.body);
-    const { email } = ctx.request.body;
+    const { email, seminar } = ctx.request.body;
+    let info;
+    let result = {};
     const transport = nodemailer.createTransport({
       service: 'mail.ru',
       auth: {
@@ -60,14 +62,19 @@ router
       subject: 'Регистрация на семинар',
       html: confirmMessage(ctx.request.body),
     };
-    transport.sendMail(message, (err, info) => {
-      if (err) {
-        console.log(err);
-        ctx.body = { result: 'error' };
-      } else {
-        ctx.body = { result: 'success' };
-      }
-    });
+
+    const ifExist = await checkIfExists(seminar.id, email);
+
+    console.log('ifExist ' + ifExist);
+    if (ifExist) {
+      result = { result: 'email exists' };
+    } else {
+      info = await transport.sendMail(message);
+      console.log(info);
+      result = { result: info ? 'success' : 'error' };
+    }
+
+    ctx.body = result;
     next();
   })
   .put('/:id', async (ctx, next) => {
