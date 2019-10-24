@@ -2,6 +2,7 @@ import {
   getAll, getOne, createOne, updateOne, deleteOne,
 } from '../models/Seminars';
 import { getFirstFutureLesson, getAllForCurrentSeminar } from '../models/Lessons';
+import { getOne as getPreacherById } from '../models/Preachers';
 
 const Router = require('koa-router');
 
@@ -13,7 +14,17 @@ function getPrettyDate(date) {
 
 router
   .get('/', async (ctx, next) => {
-    ctx.body = await getAll();
+    const seminarsList = await getAll();
+    const promises = seminarsList.map(async seminar => ({
+      id: seminar.id,
+      title: seminar.title,
+      invite_link: seminar.invite_link,
+      lessons: (await getAllForCurrentSeminar(seminar.id)).map(lesson => lesson.info),
+      preacher: (await getPreacherById(seminar.preacher_id)).ifo,
+    }));
+
+    ctx.body = await Promise.all(promises);
+
     next();
   })
   .get('/current', async (ctx, next) => {

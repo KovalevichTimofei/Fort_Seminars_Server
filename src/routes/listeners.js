@@ -78,7 +78,6 @@ router
     next();
   })*/
   .post('/register', async (ctx, next) => {
-    console.log(ctx.request.body);
     const { email, seminar, name, surname } = ctx.request.body;
 
     try {
