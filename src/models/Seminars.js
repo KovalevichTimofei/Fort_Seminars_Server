@@ -1,5 +1,7 @@
 const Sequelize = require('sequelize');
 
+const { Op } = Sequelize;
+
 const fakeSeminars = [
   {
     title: 'Душепопечение, как это работает',
@@ -48,6 +50,7 @@ export function initSeminars(sequelize, models) {
 
   return Seminars;
 }
+
 async function recreateAndFillTable() {
   await Seminars.sync({ force: true }).then(() => {
     fakeSeminars.forEach((el, i) => Seminars.create({
@@ -66,7 +69,17 @@ export async function generateSeminars(sequelize, models) {
   return Seminars;
 }
 
-export async function getAll() {
+export async function getAll(options) {
+  const { filterBy, sortBy } = options;
+  if (filterBy) {
+    return await Seminars.findAll({
+      where: {
+        [filterBy.field]: {
+          [Op.substring]: filterBy.value,
+        },
+      },
+    }).then(seminars => seminars);
+  }
   return await Seminars.findAll().then(seminars => seminars);
 }
 

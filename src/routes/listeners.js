@@ -12,8 +12,8 @@ const Router = require('koa-router');
 export const router = new Router({ prefix: '/listeners' });
 
 router
-  .get('/', async (ctx, next) => {
-    ctx.body = await getAll();
+  .post('/', async (ctx, next) => {
+    ctx.body = await getAll(ctx.request.body);
     next();
   })
   .get('/:id', async (ctx, next) => {

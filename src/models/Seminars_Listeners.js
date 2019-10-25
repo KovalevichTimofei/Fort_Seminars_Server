@@ -64,6 +64,9 @@ export function initSeminarsListeners(sequelize, models) {
     modelName: 'seminars_listeners',
   });
 
+  SeminarsListeners.hasMany(Listeners, { foreignKey: 'id', sourceKey: 'listener_id' });
+  SeminarsListeners.hasMany(Seminars, { foreignKey: 'id', sourceKey: 'seminar_id' });
+
   return SeminarsListeners;
 }
 async function recreateAndFillTable() {

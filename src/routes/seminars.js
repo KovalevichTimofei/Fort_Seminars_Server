@@ -13,8 +13,8 @@ function getPrettyDate(date) {
 }
 
 router
-  .get('/', async (ctx, next) => {
-    const seminarsList = await getAll();
+  .post('/', async (ctx, next) => {
+    const seminarsList = await getAll(ctx.request.body);
     const promises = seminarsList.map(async seminar => ({
       id: seminar.id,
       title: seminar.title,

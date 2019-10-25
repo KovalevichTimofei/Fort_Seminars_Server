@@ -14,11 +14,11 @@ export async function initDb() {
   sequelize
     .authenticate()
     .then(() => {
-      models.preachers = initPreachers(sequelize);
-      models.seminars = initSeminars(sequelize, { preachers: models.preachers });
-      initLessons(sequelize, { preachers: models.preachers });
-      models.listeners = initListeners(sequelize);
-      initSeminarsListeners(sequelize, { preachers: models.preachers, seminars: models.seminars });
+      models.Preachers = initPreachers(sequelize);
+      models.Seminars = initSeminars(sequelize, { Preachers: models.Preachers });
+      models.Lessons = initLessons(sequelize, { Preachers: models.Preachers });
+      models.Listeners = initListeners(sequelize, models);
+      models.Seminars_Listeners = initSeminarsListeners(sequelize, { Listeners: models.Listeners, Seminars: models.Seminars });
       console.log('Connection has been established successfully.');
     })
     .catch((err) => {

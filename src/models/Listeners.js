@@ -1,5 +1,8 @@
 const Sequelize = require('sequelize');
 
+let allModels = {};
+
+let sequelize1 = {};
 class Listeners extends Sequelize.Model {}
 
 const fakeListeners = [
@@ -21,7 +24,9 @@ const fakeListeners = [
   },
 ];
 
-export function initListeners(sequelize) {
+export function initListeners(sequelize, models) {
+  sequelize1 = sequelize;
+  allModels = models;
   Listeners.init({
     id: {
       type: Sequelize.STRING,
@@ -61,8 +66,19 @@ export async function generateListeners(sequelize) {
   return Listeners;
 }
 
-export async function getAll() {
-  return await Listeners.findAll().then(listeners => listeners);
+export async function getAll(options) {
+  const { filterBy, sortBy } = options;
+  if (filterBy) {
+    return allModels.Seminars_Listeners.findAll({
+      include: [{
+        model: Listeners,
+      }],
+      where: {
+        [filterBy.field]: filterBy.value,
+      },
+    });
+  }
+  return Listeners.findAll().then(listeners => listeners);
 }
 
 export async function getOne(id) {
