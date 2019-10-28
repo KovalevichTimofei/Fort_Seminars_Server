@@ -76,7 +76,7 @@ export async function getAll(options) {
       where: {
         [filterBy.field]: filterBy.value,
       },
-    });
+    }).map(item => item.listeners[0]);
   }
   return Listeners.findAll().then(listeners => listeners);
 }
