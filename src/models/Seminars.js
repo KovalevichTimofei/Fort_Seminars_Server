@@ -5,12 +5,12 @@ const { Op } = Sequelize;
 const fakeSeminars = [
   {
     title: 'Душепопечение, как это работает',
-    preacher_id: 1,
+    preacher_id: '1',
     invite_link: 'https://www.youtube.com/embed/z14zsBbfLec',
   },
   {
     title: 'Духовная брань',
-    preacher_id: 1,
+    preacher_id: '1',
     invite_link: 'https://www.youtube.com/embed/miikxanKXcE',
   },
 ];
@@ -22,8 +22,7 @@ export function initSeminars(sequelize, models) {
 
   Seminars.init({
     id: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
+      type: Sequelize.STRING,
       unique: true,
       primaryKey: true,
     },
@@ -35,7 +34,7 @@ export function initSeminars(sequelize, models) {
       type: Sequelize.STRING,
     },
     preacher_id: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.STRING,
 
       references: {
         model: Preachers,
@@ -54,7 +53,7 @@ export function initSeminars(sequelize, models) {
 async function recreateAndFillTable() {
   await Seminars.sync({ force: true }).then(() => {
     fakeSeminars.forEach((el, i) => Seminars.create({
-      id: i + 1,
+      id: `${i + 1}`,
       title: el.title,
       preacher_id: el.preacher_id,
       invite_link: el.invite_link,
@@ -88,7 +87,7 @@ export async function getOne(id) {
 }
 
 export async function updateOne(id, editedInfo) {
-  return await Seminars.update(editedInfo, { where: { id } }).then(seminar => seminar);
+  return await Seminars.update(editedInfo, { where: { id } }).then(seminars => seminars[0]);
 }
 
 export async function createOne(newItem) {

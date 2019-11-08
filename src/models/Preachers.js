@@ -5,7 +5,7 @@ class Preachers extends Sequelize.Model {}
 export function initPreachers(sequelize) {
   Preachers.init({
     id: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.STRING,
       allowNull: false,
       unique: true,
       primaryKey: true,
@@ -29,7 +29,7 @@ export function initPreachers(sequelize) {
 }
 async function recreateAndFillTable() {
   await Preachers.sync({ force: true }).then(() => Preachers.create({
-    id: 1,
+    id: '1',
     ifo: 'Алексей Коломийцев',
     photo_url: 'https://bogvideo.com/wp-content/uploads/2018/01/Alexey-Kolomiytsev.jpg',
     info: 'Пастор-учитель библейской церкви "Слово благодати", Батл Граунд, Вашингтон, США',
@@ -52,11 +52,14 @@ export async function getOne(id) {
 }
 
 export async function updateOne(id, editedInfo) {
-  return await Preachers.update(editedInfo, { where: { id } }).then(preacher => preacher);
+  return await Preachers.update(editedInfo, { where: { id } }).then(preachers => preachers[0]);
 }
 
 export async function createOne(newItem) {
-  return await Preachers.create(newItem).then(preacher => preacher);
+  return await Preachers.create({
+    ...newItem,
+    id: `${newItem.ifo}${newItem.photo_url}`,
+  }).then(preacher => preacher);
 }
 
 export async function deleteOne(id) {

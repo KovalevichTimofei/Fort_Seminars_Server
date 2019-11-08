@@ -2,44 +2,44 @@ import Sequelize, { Op } from 'sequelize';
 
 const fakeLessons = [
   {
-    id: 1,
+    id: '1',
     info: 'Часть 1 семинара "Душепопечение, как это работает"',
     part_numb: 1,
     date: new Date(2019, 8, 5),
     abstract: '',
-    seminar_id: 1,
+    seminar_id: '1',
   },
   {
-    id: 2,
+    id: '2',
     info: 'Часть 2 семинара "Душепопечение, как это работает"',
     part_numb: 2,
     date: new Date(2019, 8, 12),
     abstract: '',
-    seminar_id: 1,
+    seminar_id: '1',
   },
   {
-    id: 3,
+    id: '3',
     info: 'Часть 3 семинара "Душепопечение, как это работает"',
     part_numb: 3,
     date: new Date(2019, 8, 19),
     abstract: '',
-    seminar_id: 1,
+    seminar_id: '1',
   },
   {
-    id: 4,
+    id: '4',
     info: 'Часть 4 семинара "Душепопечение, как это работает"',
     part_numb: 4,
     date: new Date(2019, 8, 26),
     abstract: '',
-    seminar_id: 1,
+    seminar_id: '1',
   },
   {
-    id: 5,
+    id: '5',
     info: 'Часть 1 семинара "Духовная брань"',
     part_numb: 1,
     date: new Date(2019, 9, 3),
     abstract: '',
-    seminar_id: 2,
+    seminar_id: '2',
   },
 ];
 
@@ -53,7 +53,7 @@ export function initLessons(sequelize, models) {
 
   Lessons.init({
     id: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.STRING,
       allowNull: false,
       unique: true,
       primaryKey: true,
@@ -73,7 +73,7 @@ export function initLessons(sequelize, models) {
       type: Sequelize.STRING,
     },
     seminar_id: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.STRING,
 
       references: {
         model: Seminars,
@@ -89,7 +89,7 @@ export function initLessons(sequelize, models) {
   return Lessons;
 }
 async function recreateAndFillTable() {
-  await Lessons.sync({ force: false }).then(
+  await Lessons.sync({ force: true }).then(
     () => {
       fakeLessons.forEach(el => Lessons.create({
         id: el.id,

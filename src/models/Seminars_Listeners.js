@@ -2,36 +2,36 @@ const Sequelize = require('sequelize');
 
 const fakePairs = [
   {
-    listener_id: 1,
-    seminar_id: 1,
+    listener_id: '1',
+    seminar_id: '1',
   },
   {
-    listener_id: 2,
-    seminar_id: 1,
+    listener_id: '2',
+    seminar_id: '1',
   },
   {
-    listener_id: 3,
-    seminar_id: 1,
+    listener_id: '3',
+    seminar_id: '1',
   },
   {
-    listener_id: 4,
-    seminar_id: 1,
+    listener_id: '4',
+    seminar_id: '1',
   },
   {
-    listener_id: 1,
-    seminar_id: 2,
+    listener_id: '1',
+    seminar_id: '2',
   },
   {
-    listener_id: 2,
-    seminar_id: 2,
+    listener_id: '2',
+    seminar_id: '2',
   },
   {
-    listener_id: 3,
-    seminar_id: 2,
+    listener_id: '3',
+    seminar_id: '2',
   },
   {
-    listener_id: 4,
-    seminar_id: 2,
+    listener_id: '4',
+    seminar_id: '2',
   },
 ];
 
@@ -51,7 +51,7 @@ export function initSeminarsListeners(sequelize, models) {
       },
     },
     seminar_id: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.STRING,
 
       references: {
         model: Seminars,
