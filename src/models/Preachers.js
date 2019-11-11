@@ -1,3 +1,5 @@
+import { generateId } from '../plugins';
+
 const Sequelize = require('sequelize');
 
 class Preachers extends Sequelize.Model {}
@@ -58,7 +60,7 @@ export async function updateOne(id, editedInfo) {
 export async function createOne(newItem) {
   return await Preachers.create({
     ...newItem,
-    id: `${newItem.ifo}${newItem.photo_url}`,
+    id: generateId(),
   }).then(preacher => preacher);
 }
 

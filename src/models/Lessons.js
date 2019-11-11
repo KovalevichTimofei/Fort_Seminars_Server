@@ -152,3 +152,7 @@ export async function createOne(newItem) {
 export async function deleteOne(id) {
   return await Lessons.destroy({ where: { id } }).then(() => 'success');
 }
+
+export async function deleteBySeminarId(id) {
+  return await Lessons.destroy({ where: { seminar_id: id } }).then(() => 'success');
+}

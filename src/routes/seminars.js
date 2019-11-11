@@ -1,7 +1,9 @@
 import {
   getAll, getOne, createOne, updateOne, deleteOne,
 } from '../models/Seminars';
-import { getFirstFutureLesson, getAllForCurrentSeminar, createOne as createOneLesson } from '../models/Lessons';
+import {
+  getFirstFutureLesson, getAllForCurrentSeminar, createOne as createOneLesson, deleteBySeminarId,
+} from '../models/Lessons';
 import { getOne as getPreacherById, createOne as createOnePreacher } from '../models/Preachers';
 
 const Router = require('koa-router');
@@ -76,6 +78,9 @@ router
     next();
   })
   .delete('/:id', async (ctx, next) => {
+    const lessonsDeleteResult = await deleteBySeminarId(ctx.params.id);
+    if (lessonsDeleteResult !== 'success') throw new Error('Unable to delete lessons by seminar id');
     ctx.body = await deleteOne(ctx.params.id);
+    ctx.body = { id: ctx.params.id };
     next();
   });
