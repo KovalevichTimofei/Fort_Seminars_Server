@@ -25,5 +25,6 @@ router
   })
   .delete('/:id', async (ctx, next) => {
     ctx.body = await deleteOne(ctx.params.id);
+    ctx.body = { id: ctx.params.id };
     next();
   });
