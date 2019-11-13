@@ -142,7 +142,8 @@ export async function getOne(id) {
 }
 
 export async function updateOne(id, editedInfo) {
-  return await Lessons.update(editedInfo, { where: { id } }).then(lesson => lesson);
+  await Lessons.update(editedInfo, { where: { id } });
+  return getOne(id);
 }
 
 export async function createOne(newItem) {

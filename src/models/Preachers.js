@@ -54,7 +54,8 @@ export async function getOne(id) {
 }
 
 export async function updateOne(id, editedInfo) {
-  return await Preachers.update(editedInfo, { where: { id } }).then(preachers => preachers[0]);
+  await Preachers.update(editedInfo, { where: { id } });
+  return getOne(id);
 }
 
 export async function createOne(newItem) {
