@@ -1,5 +1,5 @@
 import {
-  createOne, deleteOne, getByMonth, getAll, getOne, updateOne,
+  createOne, deleteOne, getByMonth, getAllForCurrentSeminar, getAll, getOne, updateOne,
 } from '../models/Lessons';
 
 const Router = require('koa-router');
@@ -18,6 +18,10 @@ router
   .get('/month/:number', async (ctx, next) => {
     const result = await getByMonth(ctx.params.number);
     ctx.body = result.length ? result : [{ info: 'В этом месяце нет семинаров' }];
+    next();
+  })
+  .get('/seminar/:seminarId', async (ctx, next) => {
+    ctx.body = await getAllForCurrentSeminar(ctx.params.seminarId);
     next();
   })
   .post('/create', async (ctx, next) => {

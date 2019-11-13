@@ -138,7 +138,7 @@ export async function getFirstFutureLesson() {
 }
 
 export async function getOne(id) {
-  return await Lessons.findAll({ where: { id } }).then(lesson => lesson);
+  return await Lessons.findAll({ where: { id } }).then(lessons => lessons[0]);
 }
 
 export async function updateOne(id, editedInfo) {
