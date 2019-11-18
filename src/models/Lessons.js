@@ -1,4 +1,5 @@
 import Sequelize, { Op } from 'sequelize';
+import { generateId } from '../plugins';
 
 const fakeLessons = [
   {
@@ -111,22 +112,22 @@ export async function generateLessons(sequelize, models) {
 }
 
 export async function getAll() {
-  return await Lessons.findAll().then(lessons => lessons);
+  return Lessons.findAll().then(lessons => lessons);
 }
 
 export async function getAllForCurrentSeminar(seminarId) {
-  return await Lessons.findAll({ where: { seminar_id: seminarId } }).then(lessons => lessons);
+  return Lessons.findAll({ where: { seminar_id: seminarId } }).then(lessons => lessons);
 }
 
 export async function getByMonth(number) {
-  return await Lessons.sequalize.query('SELECT * FROM lessons WHERE EXTRACT(MONTH FROM date) = :number',
+  return Lessons.sequalize.query('SELECT * FROM lessons WHERE EXTRACT(MONTH FROM date) = :number',
     { replacements: { number } },
     { type: Lessons.sequalize.QueryTypes.SELECT })
     .then(lessons => lessons[0]);
 }
 
 export async function getFirstFutureLesson() {
-  return await Lessons.findAll(
+  return Lessons.findAll(
     {
       where: {
         date: {
@@ -138,20 +139,27 @@ export async function getFirstFutureLesson() {
 }
 
 export async function getOne(id) {
-  return await Lessons.findAll({ where: { id } }).then(lessons => lessons[0]);
+  return Lessons.findAll({ where: { id } }).then(lessons => lessons[0]);
 }
 
 export async function updateOne(id, editedInfo) {
   await Lessons.update(editedInfo, { where: { id } });
-  return getOne(id);
+  const editedLesson = await getOne(id);
+
+  editedLesson.dataValues.date = editedInfo.date;
+  return editedLesson;
 }
 
 export async function createOne(newItem) {
-  return await Lessons.create(newItem).then(lesson => lesson);
+  if (!newItem.id) newItem.id = generateId();
+  return Lessons.create(newItem).then(lesson => {
+    lesson.dataValues.date = newItem.date;
+    return lesson;
+  });
 }
 
 export async function deleteOne(id) {
-  return await Lessons.destroy({ where: { id } }).then(() => 'success');
+  return Lessons.destroy({ where: { id } }).then(() => 'success');
 }
 
 export async function deleteBySeminarId(id) {
