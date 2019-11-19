@@ -44,7 +44,7 @@ router
     ctx.body = await createOne(ctx.request.body);
     next();
   })
-  /*.post('/register', async (ctx, next) => {
+  /* .post('/register', async (ctx, next) => {
     console.log(ctx.request.body);
     const { email, seminar } = ctx.request.body;
     let info;
@@ -76,9 +76,11 @@ router
 
     ctx.body = result;
     next();
-  })*/
+  }) */
   .post('/register', async (ctx, next) => {
-    const { email, seminar, name, surname } = ctx.request.body;
+    const {
+      email, seminar, name, surname,
+    } = ctx.request.body;
 
     try {
       if ((await getByEmail(email)).length === 0) {
@@ -104,6 +106,7 @@ router
   })
   .delete('/:id', async (ctx, next) => {
     ctx.body = await deleteOne(ctx.params.id);
+    ctx.body = { id: ctx.params.id };
     next();
   });
 

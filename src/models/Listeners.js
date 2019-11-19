@@ -1,3 +1,5 @@
+import {generateId} from "../plugins";
+
 const Sequelize = require('sequelize');
 
 let allModels = {};
@@ -82,21 +84,25 @@ export async function getAll(options) {
 }
 
 export async function getOne(id) {
-  return await Listeners.findAll({ where: { id } }).then(listener => listener);
+  return Listeners.findAll({ where: { id } }).then(listeners => listeners[0]);
 }
 
 export async function getByEmail(email) {
-  return await Listeners.findAll({ where: { email } }).then(listener => listener);
+  return Listeners.findAll({ where: { email } }).then(listener => listener);
 }
 
 export async function updateOne(id, editedInfo) {
-  return await Listeners.update(editedInfo, { where: { id } }).then(listener => listener);
+  await Listeners.update(editedInfo, { where: { id } });
+  return getOne(id);
 }
 
 export async function createOne(newItem) {
-  return await Listeners.create(newItem).then(listener => listener);
+  return Listeners.create({
+    ...newItem,
+    id: generateId(),
+  }).then(listener => listener);
 }
 
 export async function deleteOne(id) {
-  return await Listeners.destroy({ where: { id } }).then(() => 'success');
+  return Listeners.destroy({ where: { id } }).then(() => 'success');
 }
