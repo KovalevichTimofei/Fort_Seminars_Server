@@ -117,7 +117,7 @@ router
   .delete('/:id', async (ctx, next) => {
     const lessonsDeleteResult = await deleteBySeminarId(ctx.params.id);
     if (lessonsDeleteResult !== 'success') throw new Error('Unable to delete lessons by seminar id');
-    ctx.body = await deleteOne(ctx.params.id);
+    await deleteOne(ctx.params.id);
     ctx.body = { id: ctx.params.id };
     next();
   });
