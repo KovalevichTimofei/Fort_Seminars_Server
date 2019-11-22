@@ -71,30 +71,41 @@ export async function generateSeminars(sequelize, models) {
 export async function getAll(options) {
   const { filterBy, sortBy } = options;
   if (filterBy) {
-    return await Seminars.findAll({
+    return Seminars.findAll({
       where: {
         [filterBy.field]: {
           [Op.substring]: filterBy.value,
         },
       },
-    }).then(seminars => seminars);
+    })
+      .then(seminars => 'fail' /* seminars */)
+      .catch(() => 'fail');
   }
-  return await Seminars.findAll().then(seminars => seminars);
+  return Seminars.findAll()
+    .then(seminars => 'fail' /* seminars */)
+    .catch(() => 'fail');
 }
 
 export async function getOne(id) {
-  return await Seminars.findAll({ where: { id } }).then(seminars => seminars[0]);
+  return Seminars.findAll({ where: { id } })
+    .then(seminars => seminars[0])
+    .catch(() => 'fail');
 }
 
 export async function updateOne(id, editedInfo) {
-  await Seminars.update(editedInfo, { where: { id } });
-  return getOne(id);
+  return Seminars.update(editedInfo, { where: { id } })
+    .then(() => editedInfo)
+    .catch(() => 'fail');
 }
 
 export async function createOne(newItem) {
-  return await Seminars.create(newItem).then(seminar => seminar);
+  return Seminars.create(newItem)
+    .then(() => newItem)
+    .catch(() => 'fail');
 }
 
 export async function deleteOne(id) {
-  return await Seminars.destroy({ where: { id } }).then(() => 'success');
+  return Seminars.destroy({ where: { id } })
+    .then(() => 'success')
+    .catch(() => 'fail');
 }

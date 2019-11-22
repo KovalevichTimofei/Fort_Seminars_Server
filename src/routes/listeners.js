@@ -1,11 +1,11 @@
-import nodemailer from 'nodemailer';
+// import nodemailer from 'nodemailer';
 import {
   createOne, deleteOne, getAll, getOne, updateOne, getByEmail,
 } from '../models/Listeners';
 import { checkIfExists, createOne as createOneSeminarListener } from '../models/Seminars_Listeners';
 import successfullyConfirm from '../views/successfullyConfirm';
 import unsuccessfullyConfirm from '../views/unsuccessfullyConfirm';
-import confirmMessage from '../views/confirmMessage';
+// import confirmMessage from '../views/confirmMessage';
 
 const Router = require('koa-router');
 
@@ -13,11 +13,25 @@ export const router = new Router({ prefix: '/listeners' });
 
 router
   .post('/', async (ctx, next) => {
-    ctx.body = await getAll(ctx.request.body);
+    const result = await getAll(ctx.request.body);
+
+    if (result === 'fail') {
+      ctx.throw(404, 'No information!');
+    } else {
+      ctx.body = result;
+    }
+
     next();
   })
   .get('/:id', async (ctx, next) => {
-    ctx.body = await getOne(ctx.params.id);
+    const result = await getOne(ctx.params.id);
+
+    if (result === 'fail') {
+      ctx.throw(404, 'Cannot find listener!');
+    } else {
+      ctx.body = result;
+    }
+
     next();
   })
   .get('/register/confirm', async (ctx, next) => {
@@ -41,7 +55,14 @@ router
     next();
   })
   .post('/create', async (ctx, next) => {
-    ctx.body = await createOne(ctx.request.body);
+    const result = await createOne(ctx.request.body);
+
+    if (result === 'fail') {
+      ctx.throw(500, 'Cannot create listener!');
+    } else {
+      ctx.body = result;
+    }
+
     next();
   })
   /* .post('/register', async (ctx, next) => {
@@ -86,8 +107,6 @@ router
       if ((await getByEmail(email)).length === 0) {
         await createOne({ ifo: `${name} ${surname}`, email, id: email });
       }
-      console.log(await checkIfExists(seminar.id, email));
-      console.log(!(await checkIfExists(seminar.id, email)));
       if (!(await checkIfExists(seminar.id, email))) {
         await createOneSeminarListener({ seminar_id: seminar.id, listener_id: email });
         ctx.body = { result: 'success' };
@@ -101,12 +120,25 @@ router
     next();
   })
   .put('/:id', async (ctx, next) => {
-    ctx.body = await updateOne(ctx.params.id, ctx.request.body);
+    const result = await updateOne(ctx.params.id, ctx.request.body);
+
+    if (result === 'fail') {
+      ctx.throw(500, 'Cannot update listener!');
+    } else {
+      ctx.body = result;
+    }
+
     next();
   })
   .delete('/:id', async (ctx, next) => {
-    await deleteOne(ctx.params.id);
-    ctx.body = { id: ctx.params.id };
+    const result = await deleteOne(ctx.params.id);
+
+    if (result === 'fail') {
+      ctx.throw(500, 'Cannot delete listener!');
+    } else {
+      ctx.body = { id: ctx.params.id };
+    }
+
     next();
   });
 

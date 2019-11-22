@@ -1,4 +1,4 @@
-import {generateId} from "../plugins";
+import { generateId } from '../plugins';
 
 const Sequelize = require('sequelize');
 
@@ -70,6 +70,7 @@ export async function generateListeners(sequelize) {
 
 export async function getAll(options) {
   const { filterBy, sortBy } = options;
+
   if (filterBy) {
     return allModels.Seminars_Listeners.findAll({
       include: [{
@@ -78,31 +79,48 @@ export async function getAll(options) {
       where: {
         [filterBy.field]: filterBy.value,
       },
-    }).map(item => item.listeners[0]);
+    })
+      .then(data => data.map(item => item.listeners[0]))
+      .catch(() => 'fail');
   }
-  return Listeners.findAll().then(listeners => listeners);
+  return Listeners.findAll()
+    .then(listeners => listeners)
+    .catch(() => 'fail');
 }
 
 export async function getOne(id) {
-  return Listeners.findAll({ where: { id } }).then(listeners => listeners[0]);
+  return Listeners.findAll({ where: { id } })
+    .then(listeners => listeners[0])
+    .catch(() => 'fail');
 }
 
 export async function getByEmail(email) {
-  return Listeners.findAll({ where: { email } }).then(listener => listener);
-}
-
-export async function updateOne(id, editedInfo) {
-  await Listeners.update(editedInfo, { where: { id } });
-  return getOne(id);
+  return Listeners.findAll({ where: { email } })
+    .then(listener => listener)
+    .catch(() => 'fail');
 }
 
 export async function createOne(newItem) {
+  const id = generateId();
   return Listeners.create({
     ...newItem,
-    id: generateId(),
-  }).then(listener => listener);
+    id,
+  })
+    .then(() => ({
+      ...newItem,
+      id,
+    }))
+    .catch(() => 'fail');
+}
+
+export async function updateOne(id, editedInfo) {
+  return Listeners.update(editedInfo, { where: { id } })
+    .then(() => editedInfo)
+    .catch(() => 'fail');
 }
 
 export async function deleteOne(id) {
-  return Listeners.destroy({ where: { id } }).then(() => 'success');
+  return Listeners.destroy({ where: { id } })
+    .then(() => 'success')
+    .catch(() => 'fail');
 }

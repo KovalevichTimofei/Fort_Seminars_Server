@@ -46,25 +46,44 @@ export async function generatePreachers(sequelize) {
 }
 
 export async function getAll() {
-  return await Preachers.findAll().then(preachers => preachers);
+  return Preachers.findAll()
+    .then(preachers => preachers)
+    .catch(() => 'fail');
 }
 
 export async function getOne(id) {
-  return await Preachers.findAll({ where: { id } }).then(preachers => preachers[0]);
-}
-
-export async function updateOne(id, editedInfo) {
-  await Preachers.update(editedInfo, { where: { id } });
-  return getOne(id);
+  return Preachers.findAll({ where: { id } })
+    .then(preachers => preachers[0])
+    .catch(() => 'fail');
 }
 
 export async function createOne(newItem) {
-  return await Preachers.create({
+  const id = generateId();
+  return Preachers.create({
     ...newItem,
-    id: generateId(),
-  }).then(preacher => preacher);
+    id,
+  })
+    .then(() => ({
+      ...newItem,
+      id,
+    }))
+    .catch(() => 'fail');
+}
+
+export async function updateOne(id, editedInfo) {
+  return Preachers.update(editedInfo, { where: { id } })
+    .then(() => editedInfo)
+    .catch(() => 'fail');
 }
 
 export async function deleteOne(id) {
-  return await Preachers.destroy({ where: { id } }).then(() => 'success');
+  return Preachers.destroy({ where: { id } })
+    .then(() => 'success')
+    .catch((err) => {
+      if (err.name === 'SequelizeForeignKeyConstraintError') {
+        return 'connected to seminar';
+      } else {
+        return 'fail';
+      }
+    });
 }

@@ -11,7 +11,11 @@ export const router = new Router({ prefix: '/lessons' });
 
 router
   .get('/', async (ctx, next) => {
-    const lessons = await getAll();
+    const lessons = await getAll()
+      .catch(() => {
+        ctx.throw(404, 'No information!');
+        next();
+      });
     const lessonsList = [];
 
     const promises = lessons.map(async (lesson) => {
@@ -28,42 +32,85 @@ router
       });
     });
 
-    await Promise.all(promises);
+    await Promise.all(promises)
+      .then(() => { ctx.body = lessonsList; })
+      .catch(() => ctx.throw(404, 'No information!'));
 
-    ctx.body = lessonsList;
     next();
   })
   .get('/:id', async (ctx, next) => {
-    const lesson = await getOne(ctx.params.id);
-    const date = { lesson };
-    ctx.body = {
-      ...lesson,
-      date: `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`,
-    };
+    const result = await getOne(ctx.params.id);
+
+    if (result === 'fail') {
+      ctx.throw(404, 'Unable find lesson!');
+    } else {
+      const date = { result };
+      ctx.body = {
+        ...result,
+        date: `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`,
+      };
+    }
     next();
   })
   .get('/month/:number', async (ctx, next) => {
     const result = await getByMonth(ctx.params.number);
-    ctx.body = result.length ? result : [{ info: 'В этом месяце нет семинаров' }];
+
+    if (result === 'fail') {
+      ctx.throw(404, 'Unable find lessons!');
+    } else {
+      ctx.body = result.length ? result : [{ info: 'В этом месяце нет семинаров' }];
+    }
+
     next();
   })
   .get('/seminar/:seminarId', async (ctx, next) => {
-    ctx.body = await getAllForCurrentSeminar(ctx.params.seminarId);
+    const result = await getAllForCurrentSeminar(ctx.params.seminarId);
+
+    if (result === 'fail') {
+      ctx.throw(404, 'Unable find lesson!');
+    } else {
+      ctx.body = result;
+    }
+
     next();
   })
   .post('/create', async (ctx, next) => {
-    ctx.body = await createOne(ctx.request.body);
+    const result = await createOne(ctx.request.body);
+
+    if (result === 'fail') {
+      ctx.throw(500, 'Unable create lesson!');
+    } else {
+      ctx.body = result;
+    }
+
     next();
   })
   .put('/:id', async (ctx, next) => {
     const lesson = await updateOne(ctx.params.id, ctx.request.body);
-    const seminar = await getSeminarById(lesson.seminar_id);
-    lesson.dataValues.seminar = seminar.title;
-    ctx.body = lesson;
+
+    if (lesson === 'fail') {
+      ctx.throw(500, 'Unable update lesson!');
+    } else {
+      const seminar = await getSeminarById(lesson.seminar_id);
+
+      if (seminar === 'fail') {
+        ctx.throw(500, 'Unable create lesson!');
+      } else {
+        lesson.dataValues.seminar = seminar.title;
+        ctx.body = lesson;
+      }
+    }
+
     next();
   })
   .delete('/:id', async (ctx, next) => {
-    await deleteOne(ctx.params.id);
-    ctx.body = { id: ctx.params.id };
+    const result = await deleteOne(ctx.params.id);
+
+    if (result === 'fail') {
+      ctx.throw(500, 'Unable delete lesson!');
+    } else {
+      ctx.body = { id: ctx.params.id };
+    }
+
     next();
   });

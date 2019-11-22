@@ -112,18 +112,23 @@ export async function generateLessons(sequelize, models) {
 }
 
 export async function getAll() {
-  return Lessons.findAll().then(lessons => lessons);
+  return Lessons.findAll()
+    .then(lessons => lessons)
+    .catch(() => 'fail');
 }
 
 export async function getAllForCurrentSeminar(seminarId) {
-  return Lessons.findAll({ where: { seminar_id: seminarId } }).then(lessons => lessons);
+  return Lessons.findAll({ where: { seminar_id: seminarId } })
+    .then(lessons => lessons)
+    .catch(() => 'fail');
 }
 
 export async function getByMonth(number) {
   return Lessons.sequalize.query('SELECT * FROM lessons WHERE EXTRACT(MONTH FROM date) = :number',
     { replacements: { number } },
     { type: Lessons.sequalize.QueryTypes.SELECT })
-    .then(lessons => lessons[0]);
+    .then(lessons => lessons[0])
+    .catch(() => 'fail');
 }
 
 export async function getFirstFutureLesson() {
@@ -135,33 +140,41 @@ export async function getFirstFutureLesson() {
         },
       },
     },
-  ).then(lessons => lessons[0]);
+  )
+    .then(lessons => lessons[0])
+    .catch(() => 'fail');
 }
 
 export async function getOne(id) {
-  return Lessons.findAll({ where: { id } }).then(lessons => lessons[0]);
+  return Lessons.findAll({ where: { id } })
+    .then(lessons => lessons[0])
+    .catch(() => 'fail');
 }
 
 export async function updateOne(id, editedInfo) {
-  await Lessons.update(editedInfo, { where: { id } });
-  const editedLesson = await getOne(id);
-
-  editedLesson.dataValues.date = editedInfo.date;
-  return editedLesson;
+  await Lessons.update(editedInfo, { where: { id } })
+    .then(() => editedInfo)
+    .catch(() => 'fail');
 }
 
 export async function createOne(newItem) {
-  if (!newItem.id) newItem.id = generateId();
-  return Lessons.create(newItem).then(lesson => {
-    lesson.dataValues.date = newItem.date;
-    return lesson;
-  });
+  const newLesson = { ...newItem };
+
+  if (!newLesson.id) newLesson.id = generateId();
+
+  return Lessons.create(newLesson)
+    .then(() => newLesson)
+    .catch(() => 'fail');
 }
 
 export async function deleteOne(id) {
-  return Lessons.destroy({ where: { id } }).then(() => 'success');
+  return Lessons.destroy({ where: { id } })
+    .then(() => 'success')
+    .catch(() => 'fail');
 }
 
 export async function deleteBySeminarId(id) {
-  return await Lessons.destroy({ where: { seminar_id: id } }).then(() => 'success');
+  return Lessons.destroy({ where: { seminar_id: id } })
+    .then(() => 'success')
+    .catch(() => 'fail');
 }
