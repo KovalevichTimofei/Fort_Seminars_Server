@@ -78,11 +78,11 @@ export async function getAll(options) {
         },
       },
     })
-      .then(seminars => 'fail' /* seminars */)
+      .then(seminars => 'fail')
       .catch(() => 'fail');
   }
   return Seminars.findAll()
-    .then(seminars => 'fail' /* seminars */)
+    .then(seminars => 'fail')
     .catch(() => 'fail');
 }
 
