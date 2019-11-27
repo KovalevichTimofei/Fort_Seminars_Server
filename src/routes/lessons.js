@@ -96,7 +96,7 @@ router
       if (seminar === 'fail') {
         ctx.throw(500, 'Unable create lesson!');
       } else {
-        lesson.dataValues.seminar = seminar.title;
+        lesson.seminar = seminar.title;
         ctx.body = lesson;
       }
     }

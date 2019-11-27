@@ -152,7 +152,7 @@ export async function getOne(id) {
 }
 
 export async function updateOne(id, editedInfo) {
-  await Lessons.update(editedInfo, { where: { id } })
+  return await Lessons.update(editedInfo, { where: { id } })
     .then(() => editedInfo)
     .catch(() => 'fail');
 }
