@@ -76,6 +76,8 @@ router
   })
   .post('/create', async (ctx, next) => {
     const result = await createOne(ctx.request.body);
+    const seminar = await getSeminarById(result.seminar_id);
+    result.seminar = seminar.title;
 
     if (result === 'fail') {
       ctx.throw(500, 'Unable create lesson!');

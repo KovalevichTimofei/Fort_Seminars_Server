@@ -111,19 +111,19 @@ export async function generateLessons(sequelize, models) {
   return Lessons;
 }
 
-export async function getAll() {
+export function getAll() {
   return Lessons.findAll()
     .then(lessons => lessons)
     .catch(() => 'fail');
 }
 
-export async function getAllForCurrentSeminar(seminarId) {
+export function getAllForCurrentSeminar(seminarId) {
   return Lessons.findAll({ where: { seminar_id: seminarId } })
     .then(lessons => lessons)
     .catch(() => 'fail');
 }
 
-export async function getByMonth(number) {
+export function getByMonth(number) {
   return Lessons.sequalize.query('SELECT * FROM lessons WHERE EXTRACT(MONTH FROM date) = :number',
     { replacements: { number } },
     { type: Lessons.sequalize.QueryTypes.SELECT })
@@ -131,7 +131,7 @@ export async function getByMonth(number) {
     .catch(() => 'fail');
 }
 
-export async function getFirstFutureLesson() {
+export function getFirstFutureLesson() {
   return Lessons.findAll(
     {
       where: {
@@ -145,19 +145,19 @@ export async function getFirstFutureLesson() {
     .catch(() => 'fail');
 }
 
-export async function getOne(id) {
+export function getOne(id) {
   return Lessons.findAll({ where: { id } })
     .then(lessons => lessons[0])
     .catch(() => 'fail');
 }
 
-export async function updateOne(id, editedInfo) {
-  return await Lessons.update(editedInfo, { where: { id } })
+export function updateOne(id, editedInfo) {
+  return Lessons.update(editedInfo, { where: { id } })
     .then(() => editedInfo)
     .catch(() => 'fail');
 }
 
-export async function createOne(newItem) {
+export function createOne(newItem) {
   const newLesson = { ...newItem };
 
   if (!newLesson.id) newLesson.id = generateId();
@@ -167,13 +167,13 @@ export async function createOne(newItem) {
     .catch(() => 'fail');
 }
 
-export async function deleteOne(id) {
+export function deleteOne(id) {
   return Lessons.destroy({ where: { id } })
     .then(() => 'success')
     .catch(() => 'fail');
 }
 
-export async function deleteBySeminarId(id) {
+export function deleteBySeminarId(id) {
   return Lessons.destroy({ where: { seminar_id: id } })
     .then(() => 'success')
     .catch(() => 'fail');

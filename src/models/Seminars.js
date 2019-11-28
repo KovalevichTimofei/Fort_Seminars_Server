@@ -68,7 +68,7 @@ export async function generateSeminars(sequelize, models) {
   return Seminars;
 }
 
-export async function getAll(options) {
+export function getAll(options) {
   const { filterBy, sortBy } = options;
   if (filterBy) {
     return Seminars.findAll({
@@ -86,25 +86,25 @@ export async function getAll(options) {
     .catch(() => 'fail');
 }
 
-export async function getOne(id) {
+export function getOne(id) {
   return Seminars.findAll({ where: { id } })
     .then(seminars => seminars[0])
     .catch(() => 'fail');
 }
 
-export async function updateOne(id, editedInfo) {
+export function updateOne(id, editedInfo) {
   return Seminars.update(editedInfo, { where: { id } })
     .then(() => editedInfo)
     .catch(() => 'fail');
 }
 
-export async function createOne(newItem) {
+export function createOne(newItem) {
   return Seminars.create(newItem)
     .then(() => newItem)
     .catch(() => 'fail');
 }
 
-export async function deleteOne(id) {
+export function deleteOne(id) {
   return Seminars.destroy({ where: { id } })
     .then(() => 'success')
     .catch(() => 'fail');

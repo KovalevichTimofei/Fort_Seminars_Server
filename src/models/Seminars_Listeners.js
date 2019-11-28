@@ -87,18 +87,18 @@ export async function generateSeminarsListeners(sequelize, models) {
   return SeminarsListeners;
 }
 
-export async function checkIfExists(seminar_id, listener_id) {
-  return await SeminarsListeners.findAll({ where: { seminar_id, listener_id } }).then(seminars_listeners => {return seminars_listeners.length});
+export function checkIfExists(seminar_id, listener_id) {
+  return SeminarsListeners.findAll({ where: { seminar_id, listener_id } }).then(seminars_listeners => {return seminars_listeners.length});
 }
 
-export async function updateOne(id, editedInfo) {
-  return await SeminarsListeners.update(editedInfo, { where: { id } }).then(seminar_listener => seminar_listener);
+export function updateOne(id, editedInfo) {
+  return SeminarsListeners.update(editedInfo, { where: { id } }).then(seminar_listener => seminar_listener);
 }
 
-export async function createOne(newItem) {
-  return await SeminarsListeners.create(newItem).then(seminar_listener => seminar_listener);
+export function createOne(newItem) {
+  return SeminarsListeners.create(newItem).then(seminar_listener => seminar_listener);
 }
 
-export async function deleteOne(id) {
-  return await SeminarsListeners.destroy({ where: { id } }).then(() => 'success');
+export function deleteOne(id) {
+  return SeminarsListeners.destroy({ where: { id } }).then(() => 'success');
 }

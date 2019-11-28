@@ -68,7 +68,7 @@ export async function generateListeners(sequelize) {
   return Listeners;
 }
 
-export async function getAll(options) {
+export function getAll(options) {
   const { filterBy, sortBy } = options;
 
   if (filterBy) {
@@ -88,19 +88,19 @@ export async function getAll(options) {
     .catch(() => 'fail');
 }
 
-export async function getOne(id) {
+export function getOne(id) {
   return Listeners.findAll({ where: { id } })
     .then(listeners => listeners[0])
     .catch(() => 'fail');
 }
 
-export async function getByEmail(email) {
+export function getByEmail(email) {
   return Listeners.findAll({ where: { email } })
     .then(listener => listener)
     .catch(() => 'fail');
 }
 
-export async function createOne(newItem) {
+export function createOne(newItem) {
   const id = generateId();
   return Listeners.create({
     ...newItem,
@@ -113,13 +113,13 @@ export async function createOne(newItem) {
     .catch(() => 'fail');
 }
 
-export async function updateOne(id, editedInfo) {
+export function updateOne(id, editedInfo) {
   return Listeners.update(editedInfo, { where: { id } })
     .then(() => editedInfo)
     .catch(() => 'fail');
 }
 
-export async function deleteOne(id) {
+export function deleteOne(id) {
   return Listeners.destroy({ where: { id } })
     .then(() => 'success')
     .catch(() => 'fail');

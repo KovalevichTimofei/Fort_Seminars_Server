@@ -45,19 +45,19 @@ export async function generatePreachers(sequelize) {
   return Preachers;
 }
 
-export async function getAll() {
+export function getAll() {
   return Preachers.findAll()
     .then(preachers => preachers)
     .catch(() => 'fail');
 }
 
-export async function getOne(id) {
+export function getOne(id) {
   return Preachers.findAll({ where: { id } })
     .then(preachers => preachers[0])
     .catch(() => 'fail');
 }
 
-export async function createOne(newItem) {
+export function createOne(newItem) {
   const id = generateId();
   return Preachers.create({
     ...newItem,
@@ -70,13 +70,13 @@ export async function createOne(newItem) {
     .catch(() => 'fail');
 }
 
-export async function updateOne(id, editedInfo) {
+export function updateOne(id, editedInfo) {
   return Preachers.update(editedInfo, { where: { id } })
     .then(() => editedInfo)
     .catch(() => 'fail');
 }
 
-export async function deleteOne(id) {
+export function deleteOne(id) {
   return Preachers.destroy({ where: { id } })
     .then(() => 'success')
     .catch((err) => {
