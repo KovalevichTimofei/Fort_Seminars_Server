@@ -44,7 +44,8 @@ router
     next();
   })
   .get('/current', async (ctx, next) => {
-    const seminarId = (await getFirstFutureLesson()).seminar_id;
+    const lesson = await getFirstFutureLesson();
+    const seminarId = lesson ? lesson.seminar_id : getLast(await getAll()).id;
     if (seminarId === 'fail') ctx.throw(404, 'Unable to get 1st future lesson!');
     const seminarLessons = (await getAllForCurrentSeminar(seminarId));
     if (seminarLessons === 'fail') ctx.throw(404, 'Unable to get lessons for seminar!');
@@ -156,3 +157,7 @@ router
     ctx.body = { id: ctx.params.id };
     next();
   });
+
+function getLast(arr) {
+  return arr[arr.length - 1];
+}
