@@ -6,6 +6,7 @@ import { checkIfExists, createOne as createOneSeminarListener } from '../models/
 import successfullyConfirm from '../views/successfullyConfirm';
 import unsuccessfullyConfirm from '../views/unsuccessfullyConfirm';
 // import confirmMessage from '../views/confirmMessage';
+import { generateId } from '../plugins';
 
 const Router = require('koa-router');
 
@@ -104,17 +105,28 @@ router
     } = ctx.request.body;
 
     try {
-      if ((await getByEmail(email)).length === 0) {
-        await createOne({ ifo: `${name} ${surname}`, email, id: email });
+      let newId;
+      const lessons = (await getByEmail(email));
+
+      if (lessons.length === 0) {
+        const newLesson = await createOne({ ifo: `${name} ${surname}`, email, id: email });
+        newId = newLesson.id;
+      } else {
+        newId = lessons[0].id;
       }
-      if (!(await checkIfExists(seminar.id, email))) {
-        await createOneSeminarListener({ seminar_id: seminar.id, listener_id: email });
+      if (!(await checkIfExists(seminar.id, newId))) {
+        await createOneSeminarListener({ seminar_id: seminar.id, listener_id: newId });
         ctx.body = { result: 'success' };
       } else {
-        ctx.body = { result: 'email exists' };
+        // ctx.body = { result: 'email exists' };
+        ctx.throw(400, { result: 'email exists' });
       }
     } catch (err) {
-      ctx.body = { result: 'error' };
+      if (err.status !== 400) {
+        ctx.throw(500, 'Unable to register!');
+      } else {
+        ctx.throw(400, 'email exists');
+      }
     }
 
     next();

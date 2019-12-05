@@ -4,7 +4,6 @@ const Sequelize = require('sequelize');
 
 let allModels = {};
 
-let sequelize1 = {};
 class Listeners extends Sequelize.Model {}
 
 const fakeListeners = [
@@ -27,7 +26,6 @@ const fakeListeners = [
 ];
 
 export function initListeners(sequelize, models) {
-  sequelize1 = sequelize;
   allModels = models;
   Listeners.init({
     id: {
@@ -96,12 +94,12 @@ export function getOne(id) {
 
 export function getByEmail(email) {
   return Listeners.findAll({ where: { email } })
-    .then(listener => listener)
+    .then(listeners => listeners)
     .catch(() => 'fail');
 }
 
 export function createOne(newItem) {
-  const id = generateId();
+  const id = newItem.id || generateId();
   return Listeners.create({
     ...newItem,
     id,

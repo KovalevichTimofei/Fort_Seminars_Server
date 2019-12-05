@@ -141,7 +141,7 @@ export function getFirstFutureLesson() {
       },
     },
   )
-    .then(lessons => lessons[0])
+    .then(lessons => {console.log(lessons); console.log(lessons[0]); return lessons[0];})
     .catch(() => 'fail');
 }
 

@@ -88,7 +88,7 @@ export async function generateSeminarsListeners(sequelize, models) {
 }
 
 export function checkIfExists(seminar_id, listener_id) {
-  return SeminarsListeners.findAll({ where: { seminar_id, listener_id } }).then(seminars_listeners => {return seminars_listeners.length});
+  return SeminarsListeners.findAll({ where: { seminar_id, listener_id } }).then(seminars_listeners => seminars_listeners.length);
 }
 
 export function updateOne(id, editedInfo) {
