@@ -68,7 +68,7 @@ export async function generateSeminars(sequelize, models) {
   return Seminars;
 }
 
-export function getAll(options) {
+export function getAll(options = {}) {
   const { filterBy, sortBy } = options;
   if (filterBy) {
     return Seminars.findAll({
