@@ -53,7 +53,7 @@ export function getAll() {
 
 export function getOne(id) {
   return Preachers.findAll({ where: { id } })
-    .then(preachers => preachers[0])
+    .then(preachers => (preachers.length ? preachers[0] : Promise.reject()))
     .catch(() => 'fail');
 }
 
@@ -82,8 +82,7 @@ export function deleteOne(id) {
     .catch((err) => {
       if (err.name === 'SequelizeForeignKeyConstraintError') {
         return 'connected to seminar';
-      } else {
-        return 'fail';
       }
+      return 'fail';
     });
 }

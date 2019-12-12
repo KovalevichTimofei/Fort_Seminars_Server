@@ -127,7 +127,7 @@ export function getByMonth(number) {
   return Lessons.sequalize.query('SELECT * FROM lessons WHERE EXTRACT(MONTH FROM date) = :number',
     { replacements: { number } },
     { type: Lessons.sequalize.QueryTypes.SELECT })
-    .then(lessons => lessons[0])
+    .then(lessons => (lessons.length ? lessons[0] : Promise.reject()))
     .catch(() => 'fail');
 }
 
@@ -141,13 +141,13 @@ export function getFirstFutureLesson() {
       },
     },
   )
-    .then(lessons => {console.log(lessons); console.log(lessons[0]); return lessons[0];})
+    .then(lessons => lessons[0])
     .catch(() => 'fail');
 }
 
 export function getOne(id) {
   return Lessons.findAll({ where: { id } })
-    .then(lessons => lessons[0])
+    .then(lessons => (lessons.length ? lessons[0] : Promise.reject()))
     .catch(() => 'fail');
 }
 

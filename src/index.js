@@ -13,6 +13,16 @@ async function main() {
 
   await initDb();
 
+  app.use(async (ctx, next) => {
+    await next();
+    if (!ctx.body && ctx.status === 404) {
+      ctx.body = {
+        code: 404,
+        error: 'Такого пути нет!',
+      };
+    }
+  });
+
   connectRoutes(app);
 
   if (require.main === module) {

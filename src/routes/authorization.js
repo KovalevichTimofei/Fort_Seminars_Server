@@ -7,11 +7,13 @@ export const router = new Router({ prefix: '/auth' });
 
 router
   .post('/signin', async (ctx, next) => {
-    const headerAndPayload = ctx.request.body;
+    const { header, payload } = ctx.request.body;
 
-    const token = jwt.sign(headerAndPayload, secret);
-    console.log(token);
-    ctx.body = { token };
+    if (payload.login === '36545fktrcfylh' && payload.password === '36545fktrcfylh') {
+      ctx.body = { token: jwt.sign({ header, payload }, secret) };
+    } else {
+      ctx.throw(401, 'Неверный логин или пароль!');
+    }
 
     next();
   });

@@ -88,7 +88,7 @@ export function getAll(options) {
 
 export function getOne(id) {
   return Listeners.findAll({ where: { id } })
-    .then(listeners => listeners[0])
+    .then(listeners => (listeners.length ? listeners[0] : Promise.reject()))
     .catch(() => 'fail');
 }
 

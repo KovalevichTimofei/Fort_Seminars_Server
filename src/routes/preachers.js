@@ -2,9 +2,25 @@ import {
   getAll, getOne, createOne, updateOne, deleteOne,
 } from '../models/Preachers';
 
+const jwt = require('jsonwebtoken');
 const Router = require('koa-router');
 
 export const router = new Router({ prefix: '/preachers' });
+
+async function authorize(ctx, next) {
+  if (!(ctx.request.method === 'GET' && /\/preachers\/./.test(ctx.request.URL.pathname))) {
+    const token = ctx.headers.authorization;
+    try {
+      jwt.verify(token, process.env.SECRET);
+    } catch (err) {
+      ctx.set('X-Status-Reason', err.message);
+      ctx.throw(401, 'Not Authorized');
+    }
+  }
+  await next();
+}
+
+router.use(authorize);
 
 router
   .get('/', async (ctx, next) => {

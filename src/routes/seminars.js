@@ -15,42 +15,27 @@ const jwt = require('jsonwebtoken');
 const Router = require('koa-router');
 
 export const router = new Router({ prefix: '/seminars' });
-const secret = process.env.SECRET;
+
+async function authorize(ctx, next) {
+  if (ctx.request.URL.pathname !== '/seminars/current') {
+    const token = ctx.headers.authorization;
+    try {
+      jwt.verify(token, process.env.SECRET);
+    } catch (err) {
+      ctx.set('X-Status-Reason', err.message);
+      ctx.throw(401, 'Not Authorized');
+    }
+  }
+  await next();
+}
+
+router.use(authorize);
 
 function getPrettyDate(date) {
   return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 }
 
 router
-  .post('/',
-    (ctx, next) => {
-      const token = ctx.headers.authorization;
-      jwt.verify(token, secret);
-      next();
-    },
-    async (ctx, next) => {
-      const seminarsList = await getAll(ctx.request.body);
-
-      if (seminarsList === 'fail') ctx.throw(404, 'No information!');
-
-      const promises = seminarsList.map(async seminar => ({
-        id: seminar.id,
-        title: seminar.title,
-        invite_link: seminar.invite_link,
-        lessons: (await getAllForCurrentSeminar(seminar.id)
-          .then(result => (result === 'fail' ? Promise.rejected() : result))
-        ).map(lesson => lesson.info),
-        preacher: (await getPreacherById(seminar.preacher_id)
-          .then(result => (result === 'fail' ? Promise.rejected() : result))
-        ).ifo,
-      }));
-
-      await Promise.all(promises)
-        .then((data) => { ctx.body = data; })
-        .catch(() => ctx.throw(404, 'No information!'));
-
-      next();
-    })
   .get('/current', async (ctx, next) => {
     const lesson = await getFirstFutureLesson();
     const seminarId = lesson ? lesson.seminar_id : getLast(await getAll()).id;
@@ -74,6 +59,28 @@ router
 
     next();
   })
+  .post('/',
+    async (ctx, next) => {
+      const seminarsList = await getAll(ctx.request.body);
+
+      if (seminarsList === 'fail') ctx.throw(404, 'No information!');
+
+      const promises = seminarsList.map(async seminar => ({
+        id: seminar.id,
+        title: seminar.title,
+        invite_link: seminar.invite_link,
+        lessons: (await getAllForCurrentSeminar(seminar.id)
+          .then(result => (result === 'fail' ? Promise.rejected() : result))
+        ).map(lesson => lesson.info),
+        preacher: (await getPreacherById(seminar.preacher_id)
+          .then(result => (result === 'fail' ? Promise.rejected() : result))
+        ).ifo,
+      }));
+
+      await Promise.all(promises)
+        .then((data) => { ctx.body = data; next(); })
+        .catch(() => ctx.throw(404, 'No information!'));
+    })
   .post('/create', async (ctx, next) => {
     const preacher = ctx.request.body.preacher.id
       ? await getPreacherById(ctx.request.body.preacher.id)

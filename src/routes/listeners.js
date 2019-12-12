@@ -6,11 +6,26 @@ import { checkIfExists, createOne as createOneSeminarListener } from '../models/
 import successfullyConfirm from '../views/successfullyConfirm';
 import unsuccessfullyConfirm from '../views/unsuccessfullyConfirm';
 // import confirmMessage from '../views/confirmMessage';
-import { generateId } from '../plugins';
 
+const jwt = require('jsonwebtoken');
 const Router = require('koa-router');
 
 export const router = new Router({ prefix: '/listeners' });
+
+async function authorize(ctx, next) {
+  if (ctx.request.URL.pathname !== '/listeners/register') {
+    const token = ctx.headers.authorization;
+    try {
+      jwt.verify(token, process.env.SECRET);
+    } catch (err) {
+      ctx.set('X-Status-Reason', err.message);
+      ctx.throw(401, 'Not Authorized');
+    }
+  }
+  await next();
+}
+
+router.use(authorize);
 
 router
   .post('/', async (ctx, next) => {
@@ -118,7 +133,6 @@ router
         await createOneSeminarListener({ seminar_id: seminar.id, listener_id: newId });
         ctx.body = { result: 'success' };
       } else {
-        // ctx.body = { result: 'email exists' };
         ctx.throw(400, { result: 'email exists' });
       }
     } catch (err) {
