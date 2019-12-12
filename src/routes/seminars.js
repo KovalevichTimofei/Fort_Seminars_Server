@@ -11,38 +11,46 @@ import {
 } from '../models/Lessons';
 import { getOne as getPreacherById, createOne as createOnePreacher } from '../models/Preachers';
 
+const jwt = require('jsonwebtoken');
 const Router = require('koa-router');
 
 export const router = new Router({ prefix: '/seminars' });
+const secret = process.env.SECRET;
 
 function getPrettyDate(date) {
   return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 }
 
 router
-  .post('/', async (ctx, next) => {
-    const seminarsList = await getAll(ctx.request.body);
+  .post('/',
+    (ctx, next) => {
+      const token = ctx.headers.authorization;
+      jwt.verify(token, secret);
+      next();
+    },
+    async (ctx, next) => {
+      const seminarsList = await getAll(ctx.request.body);
 
-    if (seminarsList === 'fail') ctx.throw(404, 'No information!');
+      if (seminarsList === 'fail') ctx.throw(404, 'No information!');
 
-    const promises = seminarsList.map(async seminar => ({
-      id: seminar.id,
-      title: seminar.title,
-      invite_link: seminar.invite_link,
-      lessons: (await getAllForCurrentSeminar(seminar.id)
-        .then(result => result === 'fail' ? Promise.rejected() : result)
-      ).map(lesson => lesson.info),
-      preacher: (await getPreacherById(seminar.preacher_id)
-        .then(result => result === 'fail' ? Promise.rejected() : result)
-      ).ifo,
-    }));
+      const promises = seminarsList.map(async seminar => ({
+        id: seminar.id,
+        title: seminar.title,
+        invite_link: seminar.invite_link,
+        lessons: (await getAllForCurrentSeminar(seminar.id)
+          .then(result => (result === 'fail' ? Promise.rejected() : result))
+        ).map(lesson => lesson.info),
+        preacher: (await getPreacherById(seminar.preacher_id)
+          .then(result => (result === 'fail' ? Promise.rejected() : result))
+        ).ifo,
+      }));
 
-    await Promise.all(promises)
-      .then((data) => { ctx.body = data; })
-      .catch(() => ctx.throw(404, 'No information!'));
+      await Promise.all(promises)
+        .then((data) => { ctx.body = data; })
+        .catch(() => ctx.throw(404, 'No information!'));
 
-    next();
-  })
+      next();
+    })
   .get('/current', async (ctx, next) => {
     const lesson = await getFirstFutureLesson();
     const seminarId = lesson ? lesson.seminar_id : getLast(await getAll()).id;
@@ -85,7 +93,7 @@ router
       const newLesson = await createOneLesson({
         ...el,
         part_numb: i + 1,
-      }).then(result => result === 'fail' ? Promise.rejected() : result);
+      }).then(result => (result === 'fail' ? Promise.rejected() : result));
       lessons.push(newLesson);
     });
 
@@ -118,17 +126,17 @@ router
     const lessons = [];
 
     const promises = ctx.request.body.lessons.map(async (el, i) => {
-      if (await getLessonById(el.id).then(result => result === 'fail' ? Promise.rejected() : result)) {
+      if (await getLessonById(el.id).then(result => (result === 'fail' ? Promise.rejected() : result))) {
         const editedLesson = await updateOneLesson(el.id, {
           ...el,
           part_numb: i + 1,
-        }).then(result => result === 'fail' ? Promise.rejected() : result);
+        }).then(result => (result === 'fail' ? Promise.rejected() : result));
         lessons.push(editedLesson);
       } else {
         const newLesson = await createOneLesson({
           ...el,
           part_numb: i + 1,
-        }).then(result => result === 'fail' ? Promise.rejected() : result);
+        }).then(result => (result === 'fail' ? Promise.rejected() : result));
         lessons.push(newLesson);
       }
     });
@@ -149,10 +157,10 @@ router
   })
   .delete('/:id', async (ctx, next) => {
     await deleteBySeminarId(ctx.params.id)
-      .then(result => result === 'fail' ? ctx.throw(500, 'Unable to delete seminars lessons!') : result);
+      .then(result => (result === 'fail' ? ctx.throw(500, 'Unable to delete seminars lessons!') : result));
 
     await deleteOne(ctx.params.id)
-      .then(result => result === 'fail' ? ctx.throw(500, 'Unable to delete seminar!') : result);
+      .then(result => (result === 'fail' ? ctx.throw(500, 'Unable to delete seminar!') : result));
 
     ctx.body = { id: ctx.params.id };
     next();

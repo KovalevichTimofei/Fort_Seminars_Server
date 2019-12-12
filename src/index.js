@@ -1,8 +1,8 @@
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import cors from 'koa-cors';
-import connectRoutes from './routes';
 import './env';
+import connectRoutes from './routes';
 import { initDb } from './models';
 
 async function main() {

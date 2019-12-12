@@ -11,7 +11,6 @@ const sequelize = new Sequelize(process.env.DB_URL);// 'postgres://postgres:root
 sequelize
   .authenticate()
   .then(async () => {
-    console.log('Connection has been established successfully.');
     const Preachers = await generatePreachers(sequelize);
     const Seminars = await generateSeminars(sequelize, { Preachers });
     await generateLessons(sequelize, { Seminars });

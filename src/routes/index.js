@@ -5,12 +5,15 @@ import { router as seminarsRouter } from './seminars';
 import { router as lessonsRouter } from './lessons';
 import { router as listenersRouter } from './listeners';
 import { router as preachersRouter } from './preachers';
+import { router as authRouter } from './authorization';
 
 const router = new Router();
 
 router.use(
   defaultRouter.routes(),
   defaultRouter.allowedMethods(),
+  authRouter.routes(),
+  authRouter.allowedMethods(),
   seminarsRouter.routes(),
   seminarsRouter.allowedMethods(),
   lessonsRouter.routes(),
