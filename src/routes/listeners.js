@@ -1,11 +1,9 @@
-// import nodemailer from 'nodemailer';
 import {
   createOne, deleteOne, getAll, getOne, updateOne, getByEmail,
 } from '../models/Listeners';
 import { checkIfExists, createOne as createOneSeminarListener } from '../models/Seminars_Listeners';
 import successfullyConfirm from '../views/successfullyConfirm';
 import unsuccessfullyConfirm from '../views/unsuccessfullyConfirm';
-// import confirmMessage from '../views/confirmMessage';
 
 const jwt = require('jsonwebtoken');
 const Router = require('koa-router');
@@ -81,39 +79,6 @@ router
 
     next();
   })
-  /* .post('/register', async (ctx, next) => {
-    console.log(ctx.request.body);
-    const { email, seminar } = ctx.request.body;
-    let info;
-    let result = {};
-    const transport = nodemailer.createTransport({
-      service: 'mail.ru',
-      auth: {
-        user: 'Mfortechnaya@mail.ru',
-        pass: 'molod_brest2015',
-      },
-    });
-    const message = {
-      from: 'Mfortechnaya@mail.ru',
-      to: email,
-      subject: 'Регистрация на семинар',
-      html: confirmMessage(ctx.request.body),
-    };
-
-    const ifExist = await checkIfExists(seminar.id, email);
-
-    console.log('ifExist ' + ifExist);
-    if (ifExist) {
-      result = { result: 'email exists' };
-    } else {
-      info = await transport.sendMail(message);
-      console.log(info);
-      result = { result: info ? 'success' : 'error' };
-    }
-
-    ctx.body = result;
-    next();
-  }) */
   .post('/register', async (ctx, next) => {
     const {
       email, seminar, name, surname,
