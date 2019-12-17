@@ -1,27 +1,14 @@
+import Router from 'koa-router';
+import { authorize } from '../plugins';
+
 import {
-  createOne, deleteOne, getByMonth, getAllForCurrentSeminar, getAll, getOne, updateOne,
+  createOne, deleteOne, getAllForCurrentSeminar, getAll, getOne, updateOne,
 } from '../models/Lessons';
 import {
   getOne as getSeminarById,
 } from '../models/Seminars';
 
-const jwt = require('jsonwebtoken');
-const Router = require('koa-router');
-
 export const router = new Router({ prefix: '/lessons' });
-
-async function authorize(ctx, next) {
-  if (!/\/lessons\/month\/\d/.test(ctx.request.URL.pathname)) {
-    const token = ctx.headers.authorization;
-    try {
-      jwt.verify(token, process.env.SECRET);
-    } catch (err) {
-      ctx.set('X-Status-Reason', err.message);
-      ctx.throw(401, 'Not Authorized');
-    }
-  }
-  await next();
-}
 
 router.use(authorize);
 
@@ -68,14 +55,6 @@ router
       };
     } catch (err) {
       ctx.throw(404, 'Unable find lesson!');
-    }
-  })
-  .get('/month/:number', async (ctx) => {
-    try {
-      const result = await getByMonth(ctx.params.number);
-      ctx.body = result.length ? result : [{ info: 'В этом месяце нет семинаров' }];
-    } catch (err) {
-      ctx.throw(404, 'Unable find lessons!');
     }
   })
   .get('/seminar/:seminarId', async (ctx) => {

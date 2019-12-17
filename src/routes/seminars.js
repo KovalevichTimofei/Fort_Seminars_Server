@@ -1,8 +1,9 @@
+import Router from 'koa-router';
+import { authorize } from '../plugins';
 import {
   getAll, getOne, createOne, updateOne, deleteOne,
 } from '../models/Seminars';
 import {
-  getFirstFutureLesson,
   getAllForCurrentSeminar,
   createOne as createOneLesson,
   updateOne as updateOneLesson,
@@ -11,59 +12,11 @@ import {
 } from '../models/Lessons';
 import { getOne as getPreacherById, createOne as createOnePreacher } from '../models/Preachers';
 
-const jwt = require('jsonwebtoken');
-const Router = require('koa-router');
-
 export const router = new Router({ prefix: '/seminars' });
-
-async function authorize(ctx, next) {
-  if (ctx.request.URL.pathname !== '/seminars/current') {
-    const token = ctx.headers.authorization;
-    try {
-      jwt.verify(token, process.env.SECRET);
-    } catch (err) {
-      ctx.set('X-Status-Reason', err.message);
-      ctx.throw(401, 'Not Authorized');
-    }
-  }
-  await next();
-}
 
 router.use(authorize);
 
-function getPrettyDate(date) {
-  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
-}
-
 router
-  .get('/current', async (ctx) => {
-    let lesson;
-    let seminarId;
-    let seminarLessons;
-    let currentSeminar;
-
-    try {
-      lesson = await getFirstFutureLesson();
-      seminarId = lesson ? lesson.seminar_id : getLast(await getAll()).id;
-    } catch (err) {
-      ctx.throw(404, 'Unable to get 1st future lesson!');
-    }
-
-    try {
-      seminarLessons = (await getAllForCurrentSeminar(seminarId));
-    } catch (err) {
-      ctx.throw(404, 'Unable to get lessons for seminar!');
-    }
-
-    const seminarPeriod = `${getPrettyDate(seminarLessons[0].date)} - ${getPrettyDate(seminarLessons[seminarLessons.length - 1].date)}`;
-
-    try {
-      currentSeminar = await getOne(seminarId);
-      ctx.body = { ...currentSeminar.dataValues, period: seminarPeriod };
-    } catch (err) {
-      ctx.throw(404, 'Unable to get current seminar!');
-    }
-  })
   .get('/:id', async (ctx) => {
     try {
       ctx.body = await getOne(ctx.params.id);
@@ -220,7 +173,3 @@ router
 
     ctx.body = { id: ctx.params.id };
   });
-
-function getLast(arr) {
-  return arr[arr.length - 1];
-}

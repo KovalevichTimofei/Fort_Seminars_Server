@@ -1,5 +1,5 @@
-const Router = require('koa-router');
-const jwt = require('jsonwebtoken');
+import Router from 'koa-router';
+import jwt from 'jsonwebtoken';
 
 const secret = process.env.SECRET;
 

@@ -1,24 +1,11 @@
+import Router from 'koa-router';
+import { authorize } from '../plugins';
+
 import {
-  getAll, getOne, createOne, updateOne, deleteOne,
+  getAll, createOne, updateOne, deleteOne,
 } from '../models/Preachers';
 
-const jwt = require('jsonwebtoken');
-const Router = require('koa-router');
-
 export const router = new Router({ prefix: '/preachers' });
-
-async function authorize(ctx, next) {
-  if (!(ctx.request.method === 'GET' && /\/preachers\/./.test(ctx.request.URL.pathname))) {
-    const token = ctx.headers.authorization;
-    try {
-      jwt.verify(token, process.env.SECRET);
-    } catch (err) {
-      ctx.set('X-Status-Reason', err.message);
-      ctx.throw(401, 'Not Authorized');
-    }
-  }
-  await next();
-}
 
 router.use(authorize);
 
@@ -28,13 +15,6 @@ router
       ctx.body = await getAll();
     } catch (err) {
       ctx.throw(404, 'No information!');
-    }
-  })
-  .get('/:id', async (ctx) => {
-    try {
-      ctx.body = await getOne(ctx.params.id);
-    } catch (err) {
-      ctx.throw(404, 'Cannot find preacher!');
     }
   })
   .post('/create', async (ctx) => {
