@@ -3,19 +3,15 @@ import Router from 'koa-router';
 export const router = new Router();
 
 router
-  .get('/', (ctx, next) => {
+  .get('/', (ctx) => {
     ctx.body = { result: 'success' };
-    next();
   })
-  .all('/', (ctx, next) => {
+  .all('/', (ctx) => {
     ctx.body = { result: 'success' };
-    next();
   })
-  .get('/favicon.ico', (ctx, next) => {
+  .get('/favicon.ico', (ctx) => {
     ctx.body = { result: 'success' };
-    next();
   })
-  .all('/favicon.ico', (ctx, next) => {
+  .all('/favicon.ico', (ctx) => {
     ctx.body = { result: 'success' };
-    next();
   });

@@ -36,7 +36,7 @@ function getPrettyDate(date) {
 }
 
 router
-  .get('/current', async (ctx, next) => {
+  .get('/current', async (ctx) => {
     let lesson;
     let seminarId;
     let seminarLessons;
@@ -63,17 +63,13 @@ router
     } catch (err) {
       ctx.throw(404, 'Unable to get current seminar!');
     }
-
-    next();
   })
-  .get('/:id', async (ctx, next) => {
+  .get('/:id', async (ctx) => {
     try {
       ctx.body = await getOne(ctx.params.id);
     } catch (err) {
       ctx.throw(500, 'Cannot delete listener!');
     }
-
-    next();
   })
   .post('/',
     async (ctx) => {
@@ -99,7 +95,7 @@ router
         ctx.throw(404, 'No information!');
       }
     })
-  .post('/create', async (ctx, next) => {
+  .post('/create', async (ctx) => {
     let preacher;
 
     if (ctx.request.body.preacher.id) {
@@ -149,10 +145,8 @@ router
     } catch (err) {
       ctx.throw(500, 'Unable to create lessons for seminar!');
     }
-
-    next();
   })
-  .put('/:id', async (ctx, next) => {
+  .put('/:id', async (ctx) => {
     let preacher;
 
     if (ctx.request.body.preacher.id) {
@@ -210,10 +204,8 @@ router
     } catch (err) {
       ctx.throw(500, 'Unable to update seminar!');
     }
-
-    next();
   })
-  .delete('/:id', async (ctx, next) => {
+  .delete('/:id', async (ctx) => {
     try {
       await deleteBySeminarId(ctx.params.id);
     } catch (err) {
@@ -227,7 +219,6 @@ router
     }
 
     ctx.body = { id: ctx.params.id };
-    next();
   });
 
 function getLast(arr) {

@@ -26,7 +26,7 @@ async function authorize(ctx, next) {
 router.use(authorize);
 
 router
-  .get('/', async (ctx, next) => {
+  .get('/', async (ctx) => {
     let lessons;
 
     try {
@@ -57,10 +57,8 @@ router
     } catch (err) {
       ctx.throw(404, 'No information!');
     }
-
-    next();
   })
-  .get('/:id', async (ctx, next) => {
+  .get('/:id', async (ctx) => {
     try {
       const result = await getOne(ctx.params.id);
       const date = { result };
@@ -71,29 +69,23 @@ router
     } catch (err) {
       ctx.throw(404, 'Unable find lesson!');
     }
-
-    next();
   })
-  .get('/month/:number', async (ctx, next) => {
+  .get('/month/:number', async (ctx) => {
     try {
       const result = await getByMonth(ctx.params.number);
       ctx.body = result.length ? result : [{ info: 'В этом месяце нет семинаров' }];
     } catch (err) {
       ctx.throw(404, 'Unable find lessons!');
     }
-
-    next();
   })
-  .get('/seminar/:seminarId', async (ctx, next) => {
+  .get('/seminar/:seminarId', async (ctx) => {
     try {
       ctx.body = await getAllForCurrentSeminar(ctx.params.seminarId);
     } catch (err) {
       ctx.throw(404, 'Unable find lesson!');
     }
-
-    next();
   })
-  .post('/create', async (ctx, next) => {
+  .post('/create', async (ctx) => {
     try {
       const result = await createOne(ctx.request.body);
       const seminar = await getSeminarById(result.seminar_id);
@@ -102,10 +94,8 @@ router
     } catch (err) {
       ctx.throw(500, 'Unable create lesson!');
     }
-
-    next();
   })
-  .put('/:id', async (ctx, next) => {
+  .put('/:id', async (ctx) => {
     let lesson;
 
     try {
@@ -124,18 +114,13 @@ router
       } else {
         ctx.throw(500, err.message);
       }
-
     }
-
-    next();
   })
-  .delete('/:id', async (ctx, next) => {
+  .delete('/:id', async (ctx) => {
     try {
       await deleteOne(ctx.params.id);
       ctx.body = { id: ctx.params.id };
     } catch (err) {
       ctx.throw(500, 'Unable delete lesson!');
     }
-
-    next();
   });

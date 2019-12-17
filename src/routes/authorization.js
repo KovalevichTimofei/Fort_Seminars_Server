@@ -6,7 +6,7 @@ const secret = process.env.SECRET;
 export const router = new Router({ prefix: '/auth' });
 
 router
-  .post('/signin', async (ctx, next) => {
+  .post('/signin', async (ctx) => {
     const { header, payload } = ctx.request.body;
 
     if (
@@ -17,6 +17,4 @@ router
     } else {
       ctx.throw(401, 'Login or password is incorrect!');
     }
-
-    next();
   });

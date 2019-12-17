@@ -26,25 +26,21 @@ async function authorize(ctx, next) {
 router.use(authorize);
 
 router
-  .post('/', async (ctx, next) => {
+  .post('/', async (ctx) => {
     try {
       ctx.body = await getAll(ctx.request.body);
     } catch (err) {
       ctx.throw(404, 'No information!');
     }
-
-    next();
   })
-  .get('/:id', async (ctx, next) => {
+  .get('/:id', async (ctx) => {
     try {
       ctx.body = await getOne(ctx.params.id);
     } catch (err) {
       ctx.throw(404, 'Cannot find listener!');
     }
-
-    next();
   })
-  .get('/register/confirm', async (ctx, next) => {
+  .get('/register/confirm', async (ctx) => {
     const params = getQueryParams(ctx.req._parsedUrl.query);
     const {
       name, surname, email, seminar,
@@ -61,19 +57,15 @@ router
     } catch (err) {
       ctx.body = unsuccessfullyConfirm;
     }
-
-    next();
   })
-  .post('/create', async (ctx, next) => {
+  .post('/create', async (ctx) => {
     try {
       ctx.body = await createOne(ctx.request.body);
     } catch (err) {
       ctx.throw(500, 'Cannot create listener!');
     }
-
-    next();
   })
-  .post('/register', async (ctx, next) => {
+  .post('/register', async (ctx) => {
     const {
       email, seminar, name, surname,
     } = ctx.request.body;
@@ -101,27 +93,21 @@ router
         ctx.throw(400, 'email exists');
       }
     }
-
-    next();
   })
-  .put('/:id', async (ctx, next) => {
+  .put('/:id', async (ctx) => {
     try {
       ctx.body = await updateOne(ctx.params.id, ctx.request.body);
     } catch (err) {
       ctx.throw(500, 'Cannot update listener!');
     }
-
-    next();
   })
-  .delete('/:id', async (ctx, next) => {
+  .delete('/:id', async (ctx) => {
     try {
       await deleteOne(ctx.params.id);
       ctx.body = { id: ctx.params.id };
     } catch (err) {
       ctx.throw(500, 'Cannot delete listener!');
     }
-
-    next();
   });
 
 function getQueryParams(queryStr) {
