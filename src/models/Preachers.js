@@ -45,44 +45,57 @@ export async function generatePreachers(sequelize) {
   return Preachers;
 }
 
-export function getAll() {
-  return Preachers.findAll()
-    .then(preachers => preachers)
-    .catch(() => 'fail');
+export async function getAll() {
+  try {
+    return await Preachers.findAll();
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function getOne(id) {
-  return Preachers.findAll({ where: { id } })
-    .then(preachers => (preachers.length ? preachers[0] : Promise.reject()))
-    .catch(() => 'fail');
+export async function getOne(id) {
+  try {
+    const preachers = await Preachers.findAll({ where: { id } });
+    return preachers.length ? preachers[0] : Promise.reject();
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function createOne(newItem) {
+export async function createOne(newItem) {
   const id = generateId();
-  return Preachers.create({
-    ...newItem,
-    id,
-  })
-    .then(() => ({
+
+  try {
+    await Preachers.create({
       ...newItem,
       id,
-    }))
-    .catch(() => 'fail');
-}
-
-export function updateOne(id, editedInfo) {
-  return Preachers.update(editedInfo, { where: { id } })
-    .then(() => editedInfo)
-    .catch(() => 'fail');
-}
-
-export function deleteOne(id) {
-  return Preachers.destroy({ where: { id } })
-    .then(() => 'success')
-    .catch((err) => {
-      if (err.name === 'SequelizeForeignKeyConstraintError') {
-        return 'connected to seminar';
-      }
-      return 'fail';
     });
+    return {
+      ...newItem,
+      id,
+    };
+  } catch (err) {
+    throw new Error(err);
+  }
+}
+
+export async function updateOne(id, editedInfo) {
+  try {
+    await Preachers.update(editedInfo, { where: { id } });
+    return editedInfo;
+  } catch (err) {
+    throw new Error(err);
+  }
+}
+
+export async function deleteOne(id) {
+  try {
+    await Preachers.destroy({ where: { id } });
+    return 'success';
+  } catch (err) {
+    if (err.name === 'SequelizeForeignKeyConstraintError') {
+      throw new Error('connected to seminar');
+    }
+    throw new Error(err);
+  }
 }

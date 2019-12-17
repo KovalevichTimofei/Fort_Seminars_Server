@@ -27,23 +27,19 @@ router.use(authorize);
 
 router
   .post('/', async (ctx, next) => {
-    const result = await getAll(ctx.request.body);
-
-    if (result === 'fail') {
+    try {
+      ctx.body = await getAll(ctx.request.body);
+    } catch (err) {
       ctx.throw(404, 'No information!');
-    } else {
-      ctx.body = result;
     }
 
     next();
   })
   .get('/:id', async (ctx, next) => {
-    const result = await getOne(ctx.params.id);
-
-    if (result === 'fail') {
+    try {
+      ctx.body = await getOne(ctx.params.id);
+    } catch (err) {
       ctx.throw(404, 'Cannot find listener!');
-    } else {
-      ctx.body = result;
     }
 
     next();
@@ -69,12 +65,10 @@ router
     next();
   })
   .post('/create', async (ctx, next) => {
-    const result = await createOne(ctx.request.body);
-
-    if (result === 'fail') {
+    try {
+      ctx.body = await createOne(ctx.request.body);
+    } catch (err) {
       ctx.throw(500, 'Cannot create listener!');
-    } else {
-      ctx.body = result;
     }
 
     next();
@@ -111,23 +105,20 @@ router
     next();
   })
   .put('/:id', async (ctx, next) => {
-    const result = await updateOne(ctx.params.id, ctx.request.body);
-
-    if (result === 'fail') {
+    try {
+      ctx.body = await updateOne(ctx.params.id, ctx.request.body);
+    } catch (err) {
       ctx.throw(500, 'Cannot update listener!');
-    } else {
-      ctx.body = result;
     }
 
     next();
   })
   .delete('/:id', async (ctx, next) => {
-    const result = await deleteOne(ctx.params.id);
-
-    if (result === 'fail') {
-      ctx.throw(500, 'Cannot delete listener!');
-    } else {
+    try {
+      await deleteOne(ctx.params.id);
       ctx.body = { id: ctx.params.id };
+    } catch (err) {
+      ctx.throw(500, 'Cannot delete listener!');
     }
 
     next();

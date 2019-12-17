@@ -24,58 +24,51 @@ router.use(authorize);
 
 router
   .get('/', async (ctx, next) => {
-    const result = await getAll();
-
-    if (result === 'fail') {
+    try {
+      ctx.body = await getAll();
+    } catch (err) {
       ctx.throw(404, 'No information!');
-    } else {
-      ctx.body = result;
     }
 
     next();
   })
   .get('/:id', async (ctx, next) => {
-    const result = await getOne(ctx.params.id);
-
-    if (result === 'fail') {
+    try {
+      ctx.body = await getOne(ctx.params.id);
+    } catch (err) {
       ctx.throw(404, 'Cannot find preacher!');
-    } else {
-      ctx.body = result;
     }
 
     next();
   })
   .post('/create', async (ctx, next) => {
-    const result = await createOne(ctx.request.body);
-
-    if (result === 'fail') {
+    try {
+      ctx.body = await createOne(ctx.request.body);
+    } catch (err) {
       ctx.throw(500, 'Cannot create preacher!');
-    } else {
-      ctx.body = result;
     }
 
     next();
   })
   .put('/:id', async (ctx, next) => {
-    const result = await updateOne(ctx.params.id, ctx.request.body);
-
-    if (result === 'fail') {
+    try {
+      ctx.body = await updateOne(ctx.params.id, ctx.request.body);
+    } catch (err) {
       ctx.throw(500, 'Cannot update preacher!');
-    } else {
-      ctx.body = result;
     }
 
     next();
   })
   .delete('/:id', async (ctx, next) => {
-    const result = await deleteOne(ctx.params.id);
-
-    if (result === 'connected to seminar') {
-      ctx.throw(500, 'Cannot delete preacher because it is connected to the seminar!');
-    } else if (result === 'fail') {
-      ctx.throw(500, 'Cannot delete preacher!');
-    } else if (result === 'success') {
+    try {
+      await deleteOne(ctx.params.id);
       ctx.body = { id: ctx.params.id };
+    } catch (err) {
+      if (err.name) {
+        ctx.throw(500, 'Cannot delete preacher because it is connected to the seminar!');
+      } else {
+        ctx.throw(500, 'Cannot delete preacher!');
+      }
     }
 
     next();
