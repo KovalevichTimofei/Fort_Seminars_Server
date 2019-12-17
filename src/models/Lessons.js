@@ -133,7 +133,7 @@ export async function getByMonth(number) {
       { replacements: { number } },
       { type: Lessons.sequalize.QueryTypes.SELECT });
 
-    return lessons.length ? lessons[0] : Promise.reject();
+    return lessons.length ? lessons[0] : new Error('No one lesson for current month is found!');
   } catch (err) {
     throw new Error(err);
   }
@@ -160,7 +160,7 @@ export async function getFirstFutureLesson() {
 export async function getOne(id) {
   try {
     const lessons = await Lessons.findAll({ where: { id } });
-    return lessons.length ? lessons[0] : Promise.reject();
+    return lessons.length ? lessons[0] : new Error('There is no lesson with current id!');
   } catch (err) {
     throw new Error(err);
   }

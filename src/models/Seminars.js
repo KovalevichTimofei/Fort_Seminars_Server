@@ -90,7 +90,7 @@ export async function getAll(options = {}) {
 export async function getOne(id) {
   try {
     const seminars = await Seminars.findAll({ where: { id } });
-    return seminars.length ? seminars[0] : Promise.reject();
+    return seminars.length ? seminars[0] : new Error('There is no seminar with current id!');
   } catch (err) {
     throw new Error(err);
   }

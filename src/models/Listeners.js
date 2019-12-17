@@ -92,7 +92,7 @@ export async function getAll(options) {
 export async function getOne(id) {
   try {
     const listeners = await Listeners.findAll({ where: { id } });
-    return listeners.length ? listeners[0] : Promise.reject();
+    return listeners.length ? listeners[0] : new Error('There is no listener with current id!');
   } catch (err) {
     throw new Error(err);
   }

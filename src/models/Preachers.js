@@ -56,7 +56,7 @@ export async function getAll() {
 export async function getOne(id) {
   try {
     const preachers = await Preachers.findAll({ where: { id } });
-    return preachers.length ? preachers[0] : Promise.reject();
+    return preachers.length ? preachers[0] : new Error('There is no preachers with current id!');
   } catch (err) {
     throw new Error(err);
   }
