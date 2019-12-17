@@ -9,7 +9,10 @@ router
   .post('/signin', async (ctx, next) => {
     const { header, payload } = ctx.request.body;
 
-    if (payload.login === 'AlexStankevich@Powerful' && payload.password === '36545fktrcfylh') {
+    if (
+      payload.login === process.env.ADMIN_LOGIN
+      && payload.password === process.env.ADMIN_PASSWORD
+    ) {
       ctx.body = { token: jwt.sign({ header, payload }, secret) };
     } else {
       ctx.throw(401, 'Login or password is incorrect!');
