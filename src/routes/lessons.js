@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import { authorize } from '../plugins';
+import { authorize, getUndefinedFields, isEmpty } from '../plugins';
 
 import {
   createOne, deleteOne, getAllForCurrentSeminar, getAll, getOne, updateOne,
@@ -65,6 +65,12 @@ router
     }
   })
   .post('/create', async (ctx) => {
+    const emptyFields = getUndefinedFields(ctx.request.body, ['date', 'part_numb']);
+
+    if (emptyFields) {
+      ctx.throw(400, `This fields are missed: ${emptyFields}`);
+    }
+
     try {
       const result = await createOne(ctx.request.body);
       const seminar = await getSeminarById(result.seminar_id);
@@ -75,6 +81,10 @@ router
     }
   })
   .put('/:id', async (ctx) => {
+    if (isEmpty(ctx.request.body)) {
+      ctx.throw(400, 'Empty body');
+    }
+
     let lesson;
 
     try {

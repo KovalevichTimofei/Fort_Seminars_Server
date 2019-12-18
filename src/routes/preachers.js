@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import { authorize } from '../plugins';
+import { authorize, isEmpty } from '../plugins';
 
 import {
   getAll, createOne, updateOne, deleteOne,
@@ -18,6 +18,10 @@ router
     }
   })
   .post('/create', async (ctx) => {
+    if (!ctx.request.body.ifo) {
+      ctx.throw(400, 'This fields are missed: ifo');
+    }
+
     try {
       ctx.body = await createOne(ctx.request.body);
     } catch (err) {
@@ -25,6 +29,10 @@ router
     }
   })
   .put('/:id', async (ctx) => {
+    if (isEmpty(ctx.request.body)) {
+      ctx.throw(400, 'Empty body');
+    }
+
     try {
       ctx.body = await updateOne(ctx.params.id, ctx.request.body);
     } catch (err) {

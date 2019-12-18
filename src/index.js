@@ -13,7 +13,7 @@ async function main() {
 
   await initDb();
 
-  app.use(async (ctx) => {
+  app.use(async (ctx, next) => {
     await next();
     if (!ctx.body && ctx.status === 404) {
       ctx.throw(404, { error: 'Nonexistent route!' });

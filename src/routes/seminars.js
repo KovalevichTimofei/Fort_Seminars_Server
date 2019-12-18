@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import { authorize } from '../plugins';
+import { authorize, getUndefinedFields, isEmpty } from '../plugins';
 import {
   getAll, getOne, createOne, updateOne, deleteOne,
 } from '../models/Seminars';
@@ -49,6 +49,12 @@ router
       }
     })
   .post('/create', async (ctx) => {
+    const emptyFields = getUndefinedFields(ctx.request.body, ['seminar', 'preacher', 'lessons']);
+
+    if (emptyFields) {
+      ctx.throw(400, `This fields are missed: ${emptyFields}`);
+    }
+
     let preacher;
 
     if (ctx.request.body.preacher.id) {
@@ -100,6 +106,10 @@ router
     }
   })
   .put('/:id', async (ctx) => {
+    if (isEmpty(ctx.request.body)) {
+      ctx.throw(400, 'Empty body');
+    }
+
     let preacher;
 
     if (ctx.request.body.preacher.id) {
