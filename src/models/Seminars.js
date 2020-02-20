@@ -68,44 +68,57 @@ export async function generateSeminars(sequelize, models) {
   return Seminars;
 }
 
-export function getAll(options = {}) {
+export async function getAll(options = {}) {
   const { filterBy, sortBy } = options;
-  if (filterBy) {
-    return Seminars.findAll({
-      where: {
-        [filterBy.field]: {
-          [Op.substring]: filterBy.value,
+
+  try {
+    if (filterBy) {
+      return await Seminars.findAll({
+        where: {
+          [filterBy.field]: {
+            [Op.substring]: filterBy.value,
+          },
         },
-      },
-    })
-      .then(seminars => seminars)
-      .catch(() => 'fail');
+      });
+    }
+    return await Seminars.findAll();
+  } catch (err) {
+    throw new Error(err);
   }
-  return Seminars.findAll()
-    .then(seminars => seminars)
-    .catch(() => 'fail');
 }
 
-export function getOne(id) {
-  return Seminars.findAll({ where: { id } })
-    .then(seminars => seminars[0])
-    .catch(() => 'fail');
+export async function getOne(id) {
+  try {
+    const seminars = await Seminars.findAll({ where: { id } });
+    return seminars.length ? seminars[0] : new Error('There is no seminar with current id!');
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function updateOne(id, editedInfo) {
-  return Seminars.update(editedInfo, { where: { id } })
-    .then(() => editedInfo)
-    .catch(() => 'fail');
+export async function updateOne(id, editedInfo) {
+  try {
+    await Seminars.update(editedInfo, { where: { id } });
+    return editedInfo;
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function createOne(newItem) {
-  return Seminars.create(newItem)
-    .then(() => newItem)
-    .catch(() => 'fail');
+export async function createOne(newItem) {
+  try {
+    await Seminars.create(newItem);
+    return newItem;
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function deleteOne(id) {
-  return Seminars.destroy({ where: { id } })
-    .then(() => 'success')
-    .catch(() => 'fail');
+export async function deleteOne(id) {
+  try {
+    await Seminars.destroy({ where: { id } });
+    return 'success';
+  } catch (err) {
+    throw new Error(err);
+  }
 }

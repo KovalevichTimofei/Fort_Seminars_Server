@@ -66,59 +66,78 @@ export async function generateListeners(sequelize) {
   return Listeners;
 }
 
-export function getAll(options) {
+export async function getAll(options) {
   const { filterBy, sortBy } = options;
 
-  if (filterBy) {
-    return allModels.Seminars_Listeners.findAll({
-      include: [{
-        model: Listeners,
-      }],
-      where: {
-        [filterBy.field]: filterBy.value,
-      },
-    })
-      .then(data => data.map(item => item.listeners[0]))
-      .catch(() => 'fail');
+  try {
+    if (filterBy) {
+      const data = await allModels.Seminars_Listeners.findAll({
+        include: [{
+          model: Listeners,
+        }],
+        where: {
+          [filterBy.field]: filterBy.value,
+        },
+      });
+
+      return data.map(item => item.listeners[0]);
+    }
+
+    return await Listeners.findAll();
+  } catch (err) {
+    throw new Error(err);
   }
-  return Listeners.findAll()
-    .then(listeners => listeners)
-    .catch(() => 'fail');
 }
 
-export function getOne(id) {
-  return Listeners.findAll({ where: { id } })
-    .then(listeners => listeners[0])
-    .catch(() => 'fail');
+export async function getOne(id) {
+  try {
+    const listeners = await Listeners.findAll({ where: { id } });
+    return listeners.length ? listeners[0] : new Error('There is no listener with current id!');
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function getByEmail(email) {
-  return Listeners.findAll({ where: { email } })
-    .then(listeners => listeners)
-    .catch(() => 'fail');
+export async function getByEmail(email) {
+  try {
+    return await Listeners.findAll({ where: { email } });
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function createOne(newItem) {
+export async function createOne(newItem) {
   const id = newItem.id || generateId();
-  return Listeners.create({
-    ...newItem,
-    id,
-  })
-    .then(() => ({
+
+  try {
+    await Listeners.create({
       ...newItem,
       id,
-    }))
-    .catch(() => 'fail');
+    });
+
+    return {
+      ...newItem,
+      id,
+    };
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function updateOne(id, editedInfo) {
-  return Listeners.update(editedInfo, { where: { id } })
-    .then(() => editedInfo)
-    .catch(() => 'fail');
+export async function updateOne(id, editedInfo) {
+  try {
+    await Listeners.update(editedInfo, { where: { id } });
+    return editedInfo;
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function deleteOne(id) {
-  return Listeners.destroy({ where: { id } })
-    .then(() => 'success')
-    .catch(() => 'fail');
+export async function deleteOne(id) {
+  try {
+    await Listeners.destroy({ where: { id } });
+    return 'success';
+  } catch (err) {
+    throw new Error(err);
+  }
 }

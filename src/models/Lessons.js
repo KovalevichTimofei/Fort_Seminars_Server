@@ -111,70 +111,95 @@ export async function generateLessons(sequelize, models) {
   return Lessons;
 }
 
-export function getAll() {
-  return Lessons.findAll()
-    .then(lessons => lessons)
-    .catch(() => 'fail');
+export async function getAll() {
+  try {
+    return await Lessons.findAll();
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function getAllForCurrentSeminar(seminarId) {
-  return Lessons.findAll({ where: { seminar_id: seminarId } })
-    .then(lessons => lessons)
-    .catch(() => 'fail');
+export async function getAllForCurrentSeminar(seminarId) {
+  try {
+    return await Lessons.findAll({ where: { seminar_id: seminarId } });
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function getByMonth(number) {
-  return Lessons.sequalize.query('SELECT * FROM lessons WHERE EXTRACT(MONTH FROM date) = :number',
-    { replacements: { number } },
-    { type: Lessons.sequalize.QueryTypes.SELECT })
-    .then(lessons => lessons[0])
-    .catch(() => 'fail');
+export async function getByMonth(number) {
+  try {
+    const lessons = await Lessons.sequalize.query('SELECT * FROM lessons WHERE EXTRACT(MONTH FROM date) = :number',
+      { replacements: { number } },
+      { type: Lessons.sequalize.QueryTypes.SELECT });
+
+    return lessons.length ? lessons[0] : new Error('No one lesson for current month is found!');
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function getFirstFutureLesson() {
-  return Lessons.findAll(
-    {
-      where: {
-        date: {
-          [Op.gte]: Date.now(),
+export async function getFirstFutureLesson() {
+  try {
+    const lessons = await Lessons.findAll(
+      {
+        where: {
+          date: {
+            [Op.gte]: Date.now(),
+          },
         },
       },
-    },
-  )
-    .then(lessons => {console.log(lessons); console.log(lessons[0]); return lessons[0];})
-    .catch(() => 'fail');
+    );
+
+    return lessons[0];
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function getOne(id) {
-  return Lessons.findAll({ where: { id } })
-    .then(lessons => lessons[0])
-    .catch(() => 'fail');
+export async function getOne(id) {
+  try {
+    const lessons = await Lessons.findAll({ where: { id } });
+    return lessons.length ? lessons[0] : new Error('There is no lesson with current id!');
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function updateOne(id, editedInfo) {
-  return Lessons.update(editedInfo, { where: { id } })
-    .then(() => editedInfo)
-    .catch(() => 'fail');
+export async function updateOne(id, editedInfo) {
+  try {
+    await Lessons.update(editedInfo, { where: { id } });
+    return editedInfo;
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function createOne(newItem) {
+export async function createOne(newItem) {
   const newLesson = { ...newItem };
 
   if (!newLesson.id) newLesson.id = generateId();
 
-  return Lessons.create(newLesson)
-    .then(() => newLesson)
-    .catch(() => 'fail');
+  try {
+    await Lessons.create(newLesson);
+    return newLesson;
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function deleteOne(id) {
-  return Lessons.destroy({ where: { id } })
-    .then(() => 'success')
-    .catch(() => 'fail');
+export async function deleteOne(id) {
+  try {
+    return await Lessons.destroy({ where: { id } });
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-export function deleteBySeminarId(id) {
-  return Lessons.destroy({ where: { seminar_id: id } })
-    .then(() => 'success')
-    .catch(() => 'fail');
+export async function deleteBySeminarId(id) {
+  try {
+    return await Lessons.destroy({ where: { seminar_id: id } });
+  } catch (err) {
+    throw new Error(err);
+  }
 }

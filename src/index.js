@@ -1,8 +1,8 @@
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import cors from 'koa-cors';
-import connectRoutes from './routes';
 import './env';
+import connectRoutes from './routes';
 import { initDb } from './models';
 
 async function main() {
@@ -12,6 +12,13 @@ async function main() {
   app.use(cors());
 
   await initDb();
+
+  app.use(async (ctx, next) => {
+    await next();
+    if (!ctx.body && ctx.status === 404) {
+      ctx.throw(404, { error: 'Nonexistent route!' });
+    }
+  });
 
   connectRoutes(app);
 

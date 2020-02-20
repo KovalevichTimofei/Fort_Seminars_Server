@@ -1,6 +1,8 @@
 import Router from 'koa-router';
 
 import { router as defaultRouter } from './default';
+import { router as publicRouter } from './public';
+import { router as authRouter } from './authorization';
 import { router as seminarsRouter } from './seminars';
 import { router as lessonsRouter } from './lessons';
 import { router as listenersRouter } from './listeners';
@@ -11,6 +13,10 @@ const router = new Router();
 router.use(
   defaultRouter.routes(),
   defaultRouter.allowedMethods(),
+  publicRouter.routes(),
+  publicRouter.allowedMethods(),
+  authRouter.routes(),
+  authRouter.allowedMethods(),
   seminarsRouter.routes(),
   seminarsRouter.allowedMethods(),
   lessonsRouter.routes(),

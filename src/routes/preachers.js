@@ -1,66 +1,53 @@
-import {
-  getAll, getOne, createOne, updateOne, deleteOne,
-} from '../models/Preachers';
+import Router from 'koa-router';
+import { authorize, isEmpty } from '../plugins';
 
-const Router = require('koa-router');
+import {
+  getAll, createOne, updateOne, deleteOne,
+} from '../models/Preachers';
 
 export const router = new Router({ prefix: '/preachers' });
 
+router.use(authorize);
+
 router
-  .get('/', async (ctx, next) => {
-    const result = await getAll();
-
-    if (result === 'fail') {
+  .get('/', async (ctx) => {
+    try {
+      ctx.body = await getAll();
+    } catch (err) {
       ctx.throw(404, 'No information!');
-    } else {
-      ctx.body = result;
+    }
+  })
+  .post('/create', async (ctx) => {
+    if (!ctx.request.body.ifo) {
+      ctx.throw(400, 'This fields are missed: ifo');
     }
 
-    next();
-  })
-  .get('/:id', async (ctx, next) => {
-    const result = await getOne(ctx.params.id);
-
-    if (result === 'fail') {
-      ctx.throw(404, 'Cannot find preacher!');
-    } else {
-      ctx.body = result;
-    }
-
-    next();
-  })
-  .post('/create', async (ctx, next) => {
-    const result = await createOne(ctx.request.body);
-
-    if (result === 'fail') {
+    try {
+      ctx.body = await createOne(ctx.request.body);
+    } catch (err) {
       ctx.throw(500, 'Cannot create preacher!');
-    } else {
-      ctx.body = result;
+    }
+  })
+  .put('/:id', async (ctx) => {
+    if (isEmpty(ctx.request.body)) {
+      ctx.throw(400, 'Empty body');
     }
 
-    next();
-  })
-  .put('/:id', async (ctx, next) => {
-    const result = await updateOne(ctx.params.id, ctx.request.body);
-
-    if (result === 'fail') {
+    try {
+      ctx.body = await updateOne(ctx.params.id, ctx.request.body);
+    } catch (err) {
       ctx.throw(500, 'Cannot update preacher!');
-    } else {
-      ctx.body = result;
     }
-
-    next();
   })
-  .delete('/:id', async (ctx, next) => {
-    const result = await deleteOne(ctx.params.id);
-
-    if (result === 'connected to seminar') {
-      ctx.throw(500, 'Cannot delete preacher because it is connected to the seminar!');
-    } else if (result === 'fail') {
-      ctx.throw(500, 'Cannot delete preacher!');
-    } else if (result === 'success') {
+  .delete('/:id', async (ctx) => {
+    try {
+      await deleteOne(ctx.params.id);
       ctx.body = { id: ctx.params.id };
+    } catch (err) {
+      if (err.name) {
+        ctx.throw(500, 'Cannot delete preacher because it is connected to the seminar!');
+      } else {
+        ctx.throw(500, 'Cannot delete preacher!');
+      }
     }
-
-    next();
   });
