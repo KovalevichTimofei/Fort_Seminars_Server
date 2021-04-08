@@ -1,6 +1,6 @@
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
-import cors from 'koa-cors';
+import cors from '@koa/cors';
 import './env';
 import connectRoutes from './routes';
 import { initDb } from './models';
