@@ -5,7 +5,7 @@ import { initListeners } from './Listeners';
 import { initSeminarsListeners } from './Seminars_Listeners';
 
 const Sequelize = require('sequelize');
-
+console.log(process.env.DB_URL);
 const sequelize = new Sequelize(process.env.DB_URL);
 
 export const models = {};
