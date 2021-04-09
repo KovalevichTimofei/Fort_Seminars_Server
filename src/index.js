@@ -6,6 +6,7 @@ import connectRoutes from './routes';
 import { initDb } from './models';
 
 async function main() {
+  console.log('main');
   const app = new Koa();
 
   app.use(bodyParser());
