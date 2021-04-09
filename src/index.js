@@ -22,12 +22,9 @@ async function main() {
 
   connectRoutes(app);
 
-  if (require.main === module) {
-    const port = process.env.PORT || 3000;
-    console.log('start listen');
-    app.listen(port);
-    console.log(port);
-  }
+  const port = process.env.PORT || 3000;
+  app.listen(port);
+  console.log(port);
 }
 
 main();
