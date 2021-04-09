@@ -12,8 +12,9 @@ export const models = {};
 
 export async function initDb() {
   try {
+    console.log('try');
     await sequelize.authenticate();
-
+    console.log('await sequelize.authenticate();');
     models.Preachers = initPreachers(sequelize);
     models.Seminars = initSeminars(sequelize, { Preachers: models.Preachers });
     models.Lessons = initLessons(sequelize, { Preachers: models.Preachers });
