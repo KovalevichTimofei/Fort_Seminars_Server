@@ -6,12 +6,15 @@ import { initSeminarsListeners } from './Seminars_Listeners';
 
 const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize(process.env.DB_URL, {
-  ssl: {
-    require: true,
-    rejectUnauthorized: false,
-  }
-});
+const sequelize = new Sequelize(process.env.DB_URL,
+  {
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      }
+    }
+  });
 
 export const models = {};
 
