@@ -6,7 +6,6 @@ import connectRoutes from './routes';
 import { initDb } from './models';
 
 async function main() {
-  console.log('main');
   const app = new Koa();
 
   app.use(bodyParser());
@@ -25,6 +24,7 @@ async function main() {
 
   if (require.main === module) {
     const port = process.env.PORT || 3000;
+    console.log('start listen');
     app.listen(port);
     console.log(port);
   }
